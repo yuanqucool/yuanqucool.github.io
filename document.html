@@ -72,7 +72,7 @@
 </video></p>
 <h2 id='runtime'>Runtime</h2>
 <p>This tool provides runtime support and can dynamically create skeleton meshes through code.</p>
-<pre><code class='language-c#' lang='c#'>    [RequireComponent(typeof(SkeletonMesh))]
+<pre><code class='language-csharp' lang='csharp'>    [RequireComponent(typeof(SkeletonMesh))]
     public class SampleSkeletonMesh : MonoBehaviour
     {
         private SkeletonMesh _skeletonMesh;
@@ -86,7 +86,7 @@
         {
             var node1 = _skeletonMesh.RootNode.AddChild(Vector3.forward);
             var node2 = node1.AddChild(new Vector3(1, 0, 1), 1f);
-            var node3 = node1.AddChild(new Vector3(1, 0, 2), 1f);
+            var node3 = node2.AddChild(new Vector3(1, 0, 2), 1f);
         }
     }
 </code></pre>
