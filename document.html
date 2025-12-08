@@ -39,9 +39,11 @@ Hold down the <code>Ctrl</code> key on the keyboard to select multiple control p
 <h3 id='splicing-skeleton-meshes'>Splicing Skeleton Meshes</h3>
 <p>After editing the skeleton, you can save the current skeleton mesh as a prefab. Switch to the mesh configuration item in the <code>Inspector</code>, select a skeleton mesh in the scene as the base, drag the skeleton mesh prefab to be spliced into the scene, and move it to select the nearest splicing port to perform splicing. During splicing, click the <code>Ctrl</code> key on the keyboard to change the port to be spliced, and hold down the <code>Alt</code> key on the keyboard to rotate the prefab.</p>
 <p><img src="./images/document/splice skeleton mesh.gif" referrerpolicy="no-referrer" alt="splice skeleton mesh"></p>
+<p>If the skeleton mesh to be spliced is flipped, it will be spliced into the selected skeleton mesh.</p>
+<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/splice flipped skeleton mesh.mp4">Your browser does not support the video tag.</video></p>
 <h3 id='export'>Export</h3>
 <p>The edited mesh supports exporting as a prefab, and you can choose whether to automatically generate bone binding.</p>
-<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/skeleton%20mesh%20export.mp4">Your browser does not support the video tag.</video></p>
+<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/skeleton mesh export.mp4">Your browser does not support the video tag.</video></p>
 <h2 id='runtime'>Runtime</h2>
 <p>This tool provides runtime support and can dynamically create skeleton meshes through code.</p>
 <pre><code class='language-csharp' lang='csharp'>    [RequireComponent(typeof(SkeletonMesh))]
@@ -74,9 +76,9 @@ Hold down the <code>Ctrl</code> key on the keyboard to select multiple control p
 <h3 id='monster-simulator-runtime'>Monster Simulator (Runtime)</h3>
 <p>A simple monster simulator that creates different monster models by piecing together different body parts. At the same time, it automatically generates bone binding and adds simple procedural animations. </p>
 <p><font color="red">Note: this example uses the old input system.</font></p>
-<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/monster%20generator.mp4">Your browser does not support the video tag.</video></p>
+<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/monster generator.mp4">Your browser does not support the video tag.</video></p>
 <p>The generated monsters can be archived in <code>json</code> format. </p>
-<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/monster%20save%20data.mp4">Your browser does not support the video tag.</video></p>
+<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/monster save data.mp4">Your browser does not support the video tag.</video></p>
 
 <footer role="footer">
     <nav><ul><li><a href="index.html" title="Yuan Qu Cool"><img alt="Yuan Qu Cool" src="images/logo.png" title="Yuan Qu Cool"/></a></li></ul></nav>
