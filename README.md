@@ -59,7 +59,7 @@ After editing the skeleton, you can save the current skeleton mesh as a prefab. 
 
 If the skeleton mesh to be spliced is flipped, it will be spliced into the selected skeleton mesh's symmetric mesh.
 
-<video autoplay loop muted playsinline  height="550"><source src="./images/document/splice flipped skeleton mesh.mp4">Your browser does not support the video tag.</video>
+![splice flipped skeleton mesh](./images/document/splice%20flipped%20skeleton%20mesh.gif)
 
 ### Bone Controller
 
@@ -71,7 +71,7 @@ When a node is set as a bone, a `Transform` can be assigned to the current node'
 
 The edited mesh supports exporting as a prefab, and you can choose whether to automatically generate bone binding.
 
-<video autoplay loop muted playsinline  height="560"><source src="./images/document/skeleton mesh export.mp4">Your browser does not support the video tag.</video>
+![skeleton mesh export](./images/document/skeleton%20mesh%20export.gif)
 
 ## Runtime
 
@@ -121,11 +121,11 @@ A monster simulator that creates different monster models by piecing together di
 
 <font color="red">`Note`: this example uses the new input system.</font>
 
-<video autoplay loop muted playsinline  height="700"><source src="./images/document/monster generator.mp4">Your browser does not support the video tag.</video>
+![monster generator](./images/document/monster%20generator.gif)
 
 The generated monsters can be archived in `json` format. 
 
-<video autoplay loop muted playsinline  height="700"><source src="./images/document/monster save data.mp4">Your browser does not support the video tag.</video>
+![monster save data](./images/document/monster%20save%20data.gif)
 
 ### Wireframe Mesh Generator
 
