@@ -5,8 +5,6 @@
 
 [YouTube](https://www.youtube.com/@YuanQuCool)
 
-[Documentation](https://yuanqucool.github.io/document.html)
-
 ## Editor
 This tool comes with an editor that allows you to create skeletons by dragging nodes in the editor scene.
 
