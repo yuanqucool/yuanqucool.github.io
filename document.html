@@ -12,6 +12,7 @@
 </head>
 <body>
 <h1 id='poly-skeleton-mesh'><a href="./index.html">Poly Skeleton Mesh</a></h1>
+
 <p><code>Poly Skeleton Mesh</code> is a tool that automatically creates low-poly meshes through node skeletons. Using this tool, creators only need to adjust a few simple parameters such as the position of each node in the skeleton and section radius, and the tool will automatically create a low-poly mesh based on the relationships between nodes. Then, by splicing multiple skeleton meshes, a more complex mesh model can be created. The generated mesh models can be exported as prefabs with automatically bound <code>SkinnedMeshRenderer</code> components.</p>
 <h2 id='editor'>Editor</h2>
 <p>This tool comes with an editor that allows you to create skeletons by dragging nodes in the editor scene.</p>
@@ -31,19 +32,22 @@
 <p><img src="./images/document/edit node settings.gif" referrerpolicy="no-referrer" alt="edit node settings"></p>
 <h3 id='editing-control-points'>Editing Control Points</h3>
 <p>In addition to editing nodes, you can also edit the control points of each node, which allows for more detailed control of the node shape.
-Hold down the <code>Ctrl</code> key on the keyboard to select multiple control points for editing.</p>
+    Hold down the <code>Ctrl</code> key on the keyboard to select multiple control points for editing.</p>
 <p><img src="./images/document/edit control point.gif" referrerpolicy="no-referrer" alt="edit control point"></p>
 <h3 id='color-brush'>Color Brush</h3>
-<p>You can use the color brush to change the color of the selected node or selected control point. Click the color brush icon in the <code>Node Editor Settings</code> to activate the color brush. Then, you can click on the nodes or control points in the scene to change their colors. Finally, you can click the <code>Mouse Right Button</code> to cancel the color brush.</p>
+<p>You can use the color brush to change the color of the selected node or selected control point. Click the Color Brush icon in front of the <code>color</code> Settings item to activate the color brush. Then, you can click on the nodes or control points in the scene to change their colors. Finally, you can click the <code>Mouse Right Button</code> to cancel the color brush.</p>
 <p><img src="./images/document/color brush.gif" referrerpolicy="no-referrer" alt="color brush"></p>
 <h3 id='splicing-skeleton-meshes'>Splicing Skeleton Meshes</h3>
 <p>After editing the skeleton, you can save the current skeleton mesh as a prefab. Switch to the mesh configuration item in the <code>Inspector</code>, select a skeleton mesh in the scene as the base, drag the skeleton mesh prefab to be spliced into the scene, and move it to select the nearest splicing port to perform splicing. During splicing, click the <code>Ctrl</code> key on the keyboard to change the port to be spliced, and hold down the <code>Alt</code> key on the keyboard to rotate the prefab.</p>
 <p><img src="./images/document/splice skeleton mesh.gif" referrerpolicy="no-referrer" alt="splice skeleton mesh"></p>
-<p>If the skeleton mesh to be spliced is flipped, it will be spliced into the selected skeleton mesh.</p>
-<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/splice flipped skeleton mesh.mp4">Your browser does not support the video tag.</video></p>
+<p>If the skeleton mesh to be spliced is flipped, it will be spliced into the selected skeleton mesh&#39;s symmetric mesh.</p>
+<video autoplay loop muted playsinline  height="990"><source src="./images/document/splice flipped skeleton mesh.mp4">Your browser does not support the video tag.</video>
+<h3 id='bone-controller'>Bone Controller</h3>
+<p>When a node is set as a bone, a <code>Transform</code> can be assigned to the current node&#39;s bone controller. After locking the current <code>skeleton mesh</code>, the mesh deformation can be controlled through this bone controller, achieving an effect similar to using <code>Skinned MeshRenderer</code>.</p>
+<p><img src="./images/document/skeleton mesh bone controller.gif" referrerpolicy="no-referrer" alt="skeleton mesh bone controller"></p>
 <h3 id='export'>Export</h3>
 <p>The edited mesh supports exporting as a prefab, and you can choose whether to automatically generate bone binding.</p>
-<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/skeleton mesh export.mp4">Your browser does not support the video tag.</video></p>
+<video autoplay loop muted playsinline  height="990"><source src="./images/document/skeleton mesh export.mp4">Your browser does not support the video tag.</video>
 <h2 id='runtime'>Runtime</h2>
 <p>This tool provides runtime support and can dynamically create skeleton meshes through code.</p>
 <pre><code class='language-csharp' lang='csharp'>    [RequireComponent(typeof(SkeletonMesh))]
@@ -68,17 +72,21 @@ Hold down the <code>Ctrl</code> key on the keyboard to select multiple control p
 <p><img src="./images/document/skeleton mesh runtime.png" referrerpolicy="no-referrer" alt="skeleton mesh runtime"></p>
 <h2 id='samples'>Samples</h2>
 <h3 id='tree-generator'>Tree Generator</h3>
-<p>A simple tree generator that automatically generates low-polygon tree models by adjusting the corresponding parameters. The entire tree is generated by single <code>SkeletonMesh</code> component.</p>
+<p>A procedural tree generator that automatically generates low-polygon tree models by adjusting the corresponding parameters. The entire tree is generated by single <code>SkeletonMesh</code> component.</p>
 <p><img src="./images/document/tree generator.gif" referrerpolicy="no-referrer" alt="Tree Generator"></p>
-<h3 id='wireframe-mesh-generator'>Wireframe Mesh Generator</h3>
-<p>A simple wireframe mesh generator that can generate a skeleton mesh model of the connection of mesh vertices and edges based on the existing mesh, and each vertex of the mesh generates a <code>SkeletonMesh</code> component.</p>
-<p><img src="./images/document/wireframe mesh generator.gif" referrerpolicy="no-referrer" alt="wireframe mesh generator"></p>
+<p>At runtime, clicking the mouse plants a randomly generated tree, which gradually grows from small to large.</p>
+<p><font color="red"><code>Note</code>: this example uses the new input system.</font></p>
+<p><img src="./images/document/tree planting and growing.gif" referrerpolicy="no-referrer" alt="tree planting and growing"></p>
 <h3 id='monster-simulator-runtime'>Monster Simulator (Runtime)</h3>
-<p>A simple monster simulator that creates different monster models by piecing together different body parts. At the same time, it automatically generates bone binding and adds simple procedural animations. </p>
-<p><font color="red">Note: this example uses the old input system.</font></p>
-<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/monster generator.mp4">Your browser does not support the video tag.</video></p>
+<p>A monster simulator that creates different monster models by piecing together different body parts. It also automatically generates skeletal rigging and adds procedural animations using the &#39;Animation Rigging&#39; package, and includes serialization and storage functionality.</p>
+<p><font color="red"><code>Note</code>: this example uses the new input system.</font></p>
+<video autoplay loop muted playsinline  height="1080"><source src="./images/document/monster generator.mp4">Your browser does not support the video tag.</video>
 <p>The generated monsters can be archived in <code>json</code> format. </p>
-<p><video class="img-responsive" autoplay loop muted playsinline  height="700" src="images/document/monster save data.mp4">Your browser does not support the video tag.</video></p>
+<video autoplay loop muted playsinline  height="1080"><source src="./images/document/monster save data.mp4">Your browser does not support the video tag.</video>
+<h3 id='wireframe-mesh-generator'>Wireframe Mesh Generator</h3>
+<p>A procedural wireframe mesh generator that can generate a skeleton mesh model of the connection of mesh vertices and edges based on the existing mesh, and each vertex of the mesh generates a <code>SkeletonMesh</code> component.</p>
+<p><img src="./images/document/wireframe mesh generator.gif" referrerpolicy="no-referrer" alt="wireframe mesh generator"></p>
+<p>### </p>
 
 <footer role="footer">
     <nav><ul><li><a href="index.html" title="Yuan Qu Cool"><img alt="Yuan Qu Cool" src="images/logo.png" title="Yuan Qu Cool"/></a></li></ul></nav>
