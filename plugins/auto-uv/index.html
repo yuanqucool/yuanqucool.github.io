@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auto UV — Documentation | Yuan Qu Cool</title>
+    <meta name="description" content="Documentation for Auto UV: a pure C# UV unwrapping package for Unity that generates non-overlapping UV sets for any mesh, in the editor and at runtime.">
+    <meta name="theme-color" content="#fbfbfc">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Auto UV — Documentation">
+    <meta property="og:description" content="Non-overlapping UVs at runtime and in the editor: UV0–UV7, lightmap UV2, LSCM + ARAP flattening, layout preview.">
+    <meta property="og:image" content="images/cover.jpg">
+
+    <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/site.css">
+</head>
+
+<body class="page-doc accent--blue" data-plugin="auto-uv">
+<a class="skip-link" href="#overview">Skip to documentation</a>
+
+<header class="site-header">
+    <div class="wrap header-inner">
+        <a class="brand" href="../../index.html">
+            <img src="../../images/logo.png" width="28" height="28" alt="">
+            <span>Yuan Qu Cool</span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+            <a href="../../index.html#plugins">All plugins</a>
+            <a href="https://www.youtube.com/@YuanQuCool" target="_blank" rel="noopener">YouTube</a>
+            <a class="nav-cta" href="mailto:yuanqucool@gmail.com">Contact</a>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+
+    <header class="doc-hero">
+        <div class="wrap">
+            <a class="backlink" href="../../index.html#plugins">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                All plugins
+            </a>
+            <img class="doc-icon" src="images/icon.png" width="52" height="52" alt="">
+            <h1>Auto UV</h1>
+            <p class="doc-tagline">
+                A pure C# general-purpose UV unwrapper: generate an additional, non-overlapping UV
+                set for any mesh — at runtime, in the editor and on procedural meshes.
+            </p>
+            <div class="doc-meta">
+                <span class="pill pill--accent">Unity 6+</span>
+                <span class="pill">Runtime package</span>
+                <span class="pill">Editor window</span>
+                <span class="pill">Burst · Jobs</span>
+                <span class="pill" data-store-pill>Asset Store · soon</span>
+            </div>
+            <div class="doc-actions">
+                <a class="btn btn--primary" href="#quick-start">Start reading</a>
+                <a class="btn btn--ghost" href="mailto:yuanqucool@gmail.com">Ask a question</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrap doc-layout">
+        <aside class="doc-toc" data-toc aria-label="On this page"></aside>
+
+        <article class="doc-content">
+            <div class="prose">
+
+                <section>
+                    <h2 id="overview">Overview</h2>
+                    <p class="lead">
+                        <strong>Auto UV</strong> generates an additional, non-overlapping UV set
+                        (UV0–UV7) for any mesh, usable at runtime, in the editor and on procedural
+                        meshes. The most common application is the secondary UV set used for
+                        lightmapping (UV2), but the API itself is purpose-independent.
+                    </p>
+
+                    <figure class="media">
+                        <img src="images/hero.webp" width="1600" height="1066" alt="Auto UV: three procedural meshes with colour-block UV islands, and their UV layout panels behind them." loading="lazy" decoding="async">
+                        <figcaption>Runtime unwrapping of a sphere, a hard-surface heat sink and a torus, with the generated layout on the panels behind.</figcaption>
+                    </figure>
+
+                    <ul class="feature-list">
+                        <li><strong>Any UV channel</strong> — writes to <code>UvChannel.Uv</code> (uv0) through <code>UvChannel.Uv8</code> (uv7); the default is UV2.</li>
+                        <li><strong>No overlaps</strong> — charts are cut apart and flattened individually, and packing keeps a <code>packMargin</code> between islands.</li>
+                        <li><strong>Straighter seams, fewer islands</strong> — seam steps are shaved down and small fragments merged into neighbouring islands.</li>
+                        <li><strong>Low stretch</strong> — normal-cone charting, LSCM flattening and ARAP refinement; round parts such as spheres and capsules are split into regular axial charts.</li>
+                        <li><strong>All vertex channels preserved</strong> — normals, tangents, vertex colours, UV0–UV7, skin weights, BindShape, BlendShapes and submeshes (line and point submeshes pass through untouched).</li>
+                        <li><strong>Runtime ready</strong> — no reference to <code>UnityEditor</code>, so it works in players, in the editor and inside frame-spread coroutines.</li>
+                        <li><strong>Deterministic</strong> — repeated runs on the same input produce bit-identical results.</li>
+                        <li><strong>Source mesh untouched</strong> — <code>Generate</code> produces a new mesh; use <code>Apply</code> when writing back is intended.</li>
+                        <li><strong>Layout preview</strong> — <code>UvLayoutRenderer</code> renders any UV channel into a square texture, optionally as flat colour blocks with one colour per island.</li>
+                    </ul>
+
+                    <dl class="detail-grid">
+                        <div><dt>Engine</dt><dd>Unity 6+</dd></div>
+                        <div><dt>Channels</dt><dd>UV0–UV7</dd></div>
+                        <div><dt>Default target</dt><dd>UV2 (lightmap)</dd></div>
+                        <div><dt>Dependencies</dt><dd>Burst · Collections</dd></div>
+                    </dl>
+                </section>
+
+                <section>
+                    <h2 id="installation">Installation</h2>
+                    <p>
+                        Copy the whole <code>Assets/AutoUV</code> folder into the target project's
+                        <code>Assets/</code> folder, or import the package. Targets Unity 6000+ and
+                        depends only on <code>Unity.Burst</code>, <code>Unity.Collections</code> and
+                        <code>Unity.Mathematics</code>.
+                    </p>
+<pre data-lang="Folder"><code>Assets/AutoUV/
+  Runtime/        # runtime assembly AutoUV
+  Editor/         # editor window and editor helpers
+  Samples/        # ready-to-run sample scene and script
+  README.md       # this manual</code></pre>
+                    <p>
+                        The runtime assembly has no <code>UnityEditor</code> references, so the same
+                        calls work in a player build. The editor window and the auxiliary editor
+                        helpers live in the separate <code>AutoUV.Editor</code> assembly.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 id="quick-start">Quick start</h2>
+
+                    <h3 id="generate-a-new-mesh">Generate a new mesh</h3>
+                    <p>The source mesh is only read, never modified:</p>
+<pre data-lang="C#"><code>var result = UvUnwrapper.Generate(sourceMesh);
+if (!result.Succeeded)
+{
+    Debug.LogError(result.Message);
+    return;
+}
+
+var mesh = result.Mesh; // new mesh with UV2 written</code></pre>
+
+                    <h3 id="provide-settings">Provide settings</h3>
+<pre data-lang="C#"><code>var settings = new UvUnwrapSettings
+{
+    targetChannel = UvChannel.Uv2,
+    maxNormalAngle = 60f,
+    angleError = 1.5f,
+    areaError = 1.35f,
+    packMargin = 1f / 1024f,
+    fineDecomposition = true,
+    maxSolverIterations = 512
+};
+
+var result = UvUnwrapper.Generate(sourceMesh, settings);</code></pre>
+
+                    <h3 id="write-in-place">Write in place</h3>
+<pre data-lang="C#"><code>// The source mesh must be readable (Read/Write Enabled, or a mesh created at runtime).
+UvUnwrapper.Apply(mesh, settings);</code></pre>
+
+                    <h3 id="write-into-a-target-mesh">Write into a specific target mesh</h3>
+<pre data-lang="C#"><code>UvUnwrapper.Generate(sourceMesh, targetMesh, settings);</code></pre>
+
+                    <h3 id="coroutine">Coroutine (large meshes without frame stalls)</h3>
+<pre data-lang="C#"><code>yield return UvUnwrapper.GenerateCoroutine(
+    mesh,
+    settings,
+    result => Debug.Log($"{result.ChartCount} charts"),
+    progress => progressBar = progress);</code></pre>
+
+                    <h3 id="progress-and-cancellation">Progress and cancellation</h3>
+<pre data-lang="C#"><code>UvUnwrapper.Trace = message => Debug.Log(message);   // progress messages (stage diagnostics only in development builds)
+UvUnwrapper.CancelRequested = () => shouldStop;      // return true to abort generation</code></pre>
+                    <p>
+                        These hooks are per play session: they are cleared when a play session
+                        starts (this also covers <strong>Fast Enter Play Mode</strong>), so assign
+                        them from <code>Awake</code>, <code>OnEnable</code>, <code>Start</code> or
+                        later, not from a static initializer.
+                    </p>
+
+                    <figure class="media">
+                        <img src="images/api.webp" width="1600" height="1066" alt="The Auto UV runtime API: settings, Generate, and assigning the result to a renderer." loading="lazy" decoding="async">
+                        <figcaption>One API for the editor, runtime scripts and frame-spread coroutines.</figcaption>
+                    </figure>
+                </section>
+
+                <section>
+                    <h2 id="result-reference">Result reference</h2>
+                    <p>Every call returns a <code>UvUnwrapResult</code>:</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Member</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>Succeeded</code> / <code>Message</code></td><td>Whether the run succeeded; the failure reason.</td></tr>
+                                <tr><td><code>Mesh</code></td><td>The generated mesh (<code>null</code> on failure).</td></tr>
+                                <tr><td><code>ChartCount</code></td><td>Number of UV islands.</td></tr>
+                                <tr><td><code>SourceVertexCount</code> / <code>VertexCount</code> / <code>TriangleCount</code></td><td>Source vertices, output vertices after splitting, and triangles.</td></tr>
+                                <tr><td><code>UvCoverage</code></td><td>Fraction of the 0–1 square covered by UVs.</td></tr>
+                                <tr><td><code>Channel</code></td><td>UV channel that was actually written.</td></tr>
+                                <tr><td><code>DurationMilliseconds</code></td><td>Total duration.</td></tr>
+                                <tr><td><code>Profile</code></td><td>Per-stage timings; only non-null in development builds (<code>AUTO_UV_DEV</code>).</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 id="settings-reference">Settings reference</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>targetChannel</code></td>
+                                    <td><code>Uv2</code></td>
+                                    <td>Which channel to write. Enum names follow "which UV set", values are the API channel index: <code>Uv</code> → 0 (<code>mesh.uv</code>), <code>Uv2</code> → 1 (<code>mesh.uv2</code>) … <code>Uv8</code> → 7 (<code>mesh.uv7</code>).</td>
+                                </tr>
+                                <tr>
+                                    <td><code>hardAngle</code></td>
+                                    <td>88</td>
+                                    <td>Angle threshold for smooth adjacency: adjacent faces whose normals differ by more than this are not connected, so charts do not grow across hard edges.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>maxNormalAngle</code></td>
+                                    <td>60</td>
+                                    <td>Maximum normal spread per chart; lower values reduce stretch and increase the island count.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>angleError</code></td>
+                                    <td>1.5</td>
+                                    <td>Angle-error budget (p95 triangle anisotropy); charts above it are split.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>areaError</code></td>
+                                    <td>1.35</td>
+                                    <td>Area-error budget (p95 deviation of the UV/3D area ratio).</td>
+                                </tr>
+                                <tr>
+                                    <td><code>fineDecomposition</code></td>
+                                    <td><code>true</code></td>
+                                    <td>Build small charts first and merge them under the quality gate; <code>false</code> builds coarse charts and splits them down.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>packMargin</code></td>
+                                    <td>1/1024</td>
+                                    <td>Spacing between islands in 0–1 space.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>maxSolverIterations</code></td>
+                                    <td>512</td>
+                                    <td>LSCM iteration cap per chart.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>splitOnUvSeams</code></td>
+                                    <td><code>false</code></td>
+                                    <td>Split charts along existing UV0 seams; off by default to avoid chopping limbs into strips.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Settings are cloned and clamped to their valid ranges when a generation
+                        starts; the instance you pass in is never modified.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 id="editor-window">Editor window</h2>
+                    <p>Open the window with <strong>Tools ▸ Auto UV ▸ Unwrapper</strong>, select mesh assets, GameObjects or prefabs, then generate UVs.</p>
+                    <ul>
+                        <li>The preview follows the selection and the target channel. Scroll to zoom, drag to pan, double-click to reset the view. The dark preview area follows the window's aspect ratio; the UV square is fitted to the shorter side and always stays square. Zooming and panning are immediate and crisp. Fully stacked UV footprints are reported below the preview.</li>
+                        <li><strong>Color Block Texture</strong> / <strong>Triangle Mesh</strong> — show the preview as flat colours per UV island and/or triangle edges. Colour Block off + Triangle Mesh on is a lines-only wireframe with no fill; both on shows the fills with the triangle edges on top.</li>
+                        <li><strong>Preview</strong> (next to the Unwrap button, off by default) — previews the layout generated from the current settings instead of the mesh's stored UVs.</li>
+                        <li><strong>Update Source Mesh</strong> — writes the generated UVs into the selected meshes. With it off, the results are saved as mesh assets or prefabs in a chosen folder and revealed in the Project window; scene objects are copied, so the scene is not modified. A skinned renderer is saved together with its skeleton.</li>
+                        <li><strong>Export Color Block Texture</strong> — also creates a colour-block texture and applies it to the generated model: a prefab embeds it as a sub-asset, a mesh asset gets a separate texture asset.</li>
+                    </ul>
+                    <figure class="media">
+                        <img src="images/runtime-sample.webp" width="1600" height="1066" alt="The Auto UV runtime sample scene with live unwrap statistics, controls and UV layout panels." loading="lazy" decoding="async">
+                        <figcaption>The included runtime sample reports charts, vertices, coverage and unwrap time per mesh.</figcaption>
+                    </figure>
+                </section>
+
+                <section>
+                    <h2 id="layout-preview">Preview the UV layout</h2>
+<pre data-lang="C#"><code>var texture = UvLayoutRenderer.Render(mesh, UvChannel.Uv2, 1024);</code></pre>
+                    <p>
+                        <code>RenderPixels</code> returns a <code>Color32[]</code> and can run on a
+                        worker thread; <code>CreateTexture</code> uploads it on the main thread. Pass
+                        <code>colorBlocks: true</code> for per-island colours and
+                        <code>drawTriangles: false</code> to hide the edges;
+                        <code>RenderColorBlockTexture</code> builds the texture applied to a model.
+                    </p>
+                    <figure class="media">
+                        <img src="images/uv-layouts.webp" width="1600" height="1066" alt="Three readable UV layouts: a smooth sphere, a hard-surface heat sink and a torus, each with colour-coded islands and chart counts." loading="lazy" decoding="async">
+                        <figcaption>Colour blocks plus a high-contrast wireframe, rendered for any UV channel.</figcaption>
+                    </figure>
+                </section>
+
+                <section>
+                    <h2 id="sample">Sample</h2>
+                    <p>
+                        <code>Samples/Scenes/AutoUV Demo.unity</code> unwraps three procedural meshes
+                        at runtime and shows the generated colour blocks on the models and the UV
+                        layout on panels behind them. Open the scene and press <strong>Play</strong>.
+                        The sample component also runs in edit mode, so the finished result appears
+                        without entering play mode; in play mode the on-screen HUD regenerates the
+                        UVs with different presets and can switch the target channel.
+                    </p>
+                    <figure class="media">
+                        <img src="images/sample-scene.webp" width="1600" height="1066" alt="The Auto UV sample scene: a sphere, a heat sink and a torus on pedestals with their UV layout panels." loading="lazy" decoding="async">
+                        <figcaption>Everything in the demo scene is created by the sample script at load time.</figcaption>
+                    </figure>
+                </section>
+
+                <section>
+                    <h2 id="notes">Notes</h2>
+                    <ul>
+                        <li><strong>Read-only meshes</strong> — <code>Generate</code> only reads the source mesh and never modifies it. In the editor it normally works even when the asset's <strong>Read/Write Enabled</strong> is off; the descriptive exception is only thrown when the CPU data really has been stripped, typically in a player build.</li>
+                        <li><strong>In-place writes</strong> (<code>Apply</code>) require Read/Write, otherwise they throw an exception that points at <code>Generate</code> instead.</li>
+                        <li><strong>Imported model meshes</strong> (<code>.fbx</code>, <code>.obj</code>, …) cannot be updated in place: the model importer regenerates them. Disable <strong>Update Source Mesh</strong> to generate a copy instead.</li>
+                        <li><strong>Non-triangle submeshes</strong> (lines, points) are preserved verbatim; their vertices get a UV of 0.</li>
+                        <li><strong>Fast Enter Play Mode</strong> — the <code>Trace</code> and <code>CancelRequested</code> hooks are reset when a play session starts. The other runtime statics are immutable caches, primitive scratch buffers, or counters that are reset at the start of every pass, so keeping them across play sessions is intentional and safe.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 id="development-switch">Development switch</h2>
+                    <p>
+                        Detailed per-stage profiling and the development tools are not shipped with
+                        release builds and are controlled by the <code>AUTO_UV_DEV</code> define
+                        (undefined by default).
+                    </p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Feature</th><th>Undefined (release default)</th><th><code>AUTO_UV_DEV</code> defined</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Stage timings (<code>result.Profile</code>)</td><td>No-op; <code>Profile</code> is <code>null</code></td><td>Accumulated per stage</td></tr>
+                                <tr><td><code>Diagnostic(...)</code> messages</td><td>Calls and their strings are compiled out</td><td>Emitted through <code>UvUnwrapper.Trace</code></td></tr>
+                                <tr><td><code>Report(...)</code> progress messages</td><td>Retained</td><td>Retained</td></tr>
+                                <tr><td><strong>Tools ▸ Auto UV ▸ Run Benchmark</strong> and <strong>Generate Verification Samples</strong></td><td>Not compiled</td><td>Available</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+
+            <nav class="plugin-pager" data-plugin-pager aria-label="More plugins"></nav>
+        </article>
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <div class="wrap footer-inner">
+        <a class="footer-brand" href="../../index.html">
+            <img src="../../images/logo.png" width="24" height="24" alt="">
+            <span>Yuan Qu Cool</span>
+        </a>
+        <nav class="footer-links" aria-label="Footer">
+            <a href="../../index.html#plugins">Plugins</a>
+            <a href="https://www.youtube.com/@YuanQuCool" target="_blank" rel="noopener">YouTube</a>
+            <a href="mailto:yuanqucool@gmail.com">yuanqucool@gmail.com</a>
+        </nav>
+        <p class="footer-note">
+            © <span data-year>2026</span> Yuan Qu Cool. Unity is a trademark of Unity Technologies.
+        </p>
+    </div>
+</footer>
+
+<script src="../../js/plugins.js"></script>
+<script src="../../js/site.js"></script>
+</body>
+</html>

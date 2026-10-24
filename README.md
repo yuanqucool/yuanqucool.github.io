@@ -1,132 +1,96 @@
-﻿# Poly Skeleton Mesh
-`Poly Skeleton Mesh` is a tool that automatically creates low-poly meshes through node skeletons. Using this tool, creators only need to adjust a few simple parameters such as the position of each node in the skeleton and section radius, and the tool will automatically create a low-poly mesh based on the relationships between nodes. Then, by splicing multiple skeleton meshes, a more complex mesh model can be created. The generated mesh models can be exported as prefabs with automatically bound `SkinnedMeshRenderer` components.
+<p align="center">
+  <img src="images/logo.png" width="88" height="88" alt="">
+</p>
 
-[Asset store](https://assetstore.unity.com/packages/slug/313559)
+<h1 align="center">Yuan Qu Cool</h1>
 
-[YouTube](https://www.youtube.com/@YuanQuCool)
+<p align="center">
+  <b>Focused Unity packages for procedural 3D.</b><br>
+  <sub>Editor tools and runtime APIs that take the busywork out of making 3D content.</sub>
+</p>
 
-## Editor
-This tool comes with an editor that allows you to create skeletons by dragging nodes in the editor scene.
+<p align="center">
+  <a href="https://yuanqucool.github.io/"><b>Documentation</b></a> &nbsp;·&nbsp;
+  <a href="https://www.youtube.com/@YuanQuCool">YouTube</a> &nbsp;·&nbsp;
+  <a href="mailto:yuanqucool@gmail.com">yuanqucool@gmail.com</a>
+</p>
 
-![skeleton mesh editor](./images/document/skeleton%20mesh%20editor.png)
+---
 
-### Creating Skeleton Mesh
+## Poly Skeleton Mesh
 
-A new skeleton mesh can be created through the menu `GameObject` -> `Poly Skeleton Mesh`. You can also create a new skeleton mesh by using the keyboard shortcut `Ctrl+Shift+D`. When in the skeleton editing mode, the newly created mesh will be generated based on the position and radius of the currently selected node.
+**Build low-poly meshes from a skeleton of nodes.**
+Shape the silhouette by placing nodes and setting their radius and cross-section; the tool
+generates the hull between them. Spliced together, a few skeleton meshes become a whole
+creature, a tree or a prop — then export a prefab and drop it straight into your scene.
 
-![create skeleton mesh](./images/document/create%20skeleton%20mesh.gif)
+[![Poly Skeleton Mesh](plugins/poly-skeleton-mesh/images/cover.jpg)](https://yuanqucool.github.io/plugins/poly-skeleton-mesh/)
 
-### Creating New Node
+- **Node-tree modeling** — drag handles in the scene view to move, rotate, scale, insert, split
+  and merge nodes, with symmetry along X, Y or Z.
+- **Automatic splicing** — ports connect by proximity and the hull bridges both meshes, flipped
+  parts included, so limbs and branches join without modelling.
+- **Bone controllers** — bind a `Transform` to any node and deform the locked mesh like a skinned
+  rig. Export generates the bone hierarchy and bind poses for you.
+- **Prefab export** — mesh embedded as a sub-asset, optional lightmap UVs, a ready prefab with
+  `MeshRenderer` or `SkinnedMeshRenderer`.
+- **Runtime API** — build, edit, connect and export skeletons from code. GPU render path with an
+  automatic CPU fallback.
 
-Ensure the scene `Tools` is set to `Move Tool`. Select a node in the scene, hold down the `Shift` key on the keyboard, and drag the `Position` control in the scene to create a new node. You can switch the symmetry center, symmetry axis, and other settings through `Node Editor Settings`.
+| In the scene view | Procedural samples |
+| :---: | :---: |
+| [![Skeleton mesh editor](plugins/poly-skeleton-mesh/images/skeleton-mesh-editor.png)](https://yuanqucool.github.io/plugins/poly-skeleton-mesh/) | [![Procedural tree](plugins/poly-skeleton-mesh/images/tree-generator-poster.jpg)](https://yuanqucool.github.io/plugins/poly-skeleton-mesh/#samples) |
 
-![create node](./images/document/create%20node.gif)
+The package ships with five sample scenes: a showcase, a tree generator with click-to-plant
+growth, a runtime monster builder with IK and JSON save data, and a mesh-to-wireframe converter.
 
-### Editing Node
+**Unity 6+** &nbsp;·&nbsp; [Documentation](https://yuanqucool.github.io/plugins/poly-skeleton-mesh/) &nbsp;·&nbsp; [Asset Store](https://assetstore.unity.com/packages/slug/313559) &nbsp;·&nbsp; [YouTube demos](https://www.youtube.com/@YuanQuCool)
 
-In the scene, select one node, hold down the `Ctrl` key on the keyboard, and select another node in the scene to change the parent-child relationship between nodes.
+---
 
-![change node parent](./images/document/change%20node%20parent.gif)
+## Auto UV
 
-Switching scene `Tools` allows operations like `Move`, `Rotate`, `Scale` on nodes. Switching the `Transform Mode` configuration item in `Node Editor Settings` allows you to choose to edit only the current node or the current node and all its child nodes.
+**Non-overlapping UVs at runtime, in the editor, anywhere.**
+A pure C# UV unwrapper that generates an additional UV set for any mesh — the lightmap UV2 you
+need for baking, or any custom channel from UV0 to UV7.
 
-![transform node](./images/document/transform%20node.gif)
+[![Auto UV](plugins/auto-uv/images/cover.jpg)](https://yuanqucool.github.io/plugins/auto-uv/)
 
-Adjusting the node configuration items in the `Inspector` allows more precise settings for node shape, position, radius, color, etc.
+- **Any UV channel** — writes `mesh.uv` through `mesh.uv7`; lightmap UV2 by default.
+- **No overlaps** — charts are cut apart and flattened individually, then packed with a
+  configurable `packMargin`, so no two islands overlap.
+- **Low stretch** — normal-cone charting, LSCM flattening with ARAP refinement; round parts such
+  as spheres and capsules are split into regular axial charts.
+- **Runtime ready** — no `UnityEditor` references, so the same call works in a player build, in
+  the editor window and inside frame-spread coroutines with progress reporting.
+- **Deterministic and non-destructive** — repeated runs are bit-identical, and `Generate` never
+  touches the source mesh.
+- **Layout preview** — `UvLayoutRenderer` renders any channel into a square texture, optionally
+  as colour blocks with one colour per island.
 
-![edit node settings](./images/document/edit%20node%20settings.gif)
+| Readable layouts | Included sample scene |
+| :---: | :---: |
+| [![UV layouts](plugins/auto-uv/images/uv-layouts.jpg)](https://yuanqucool.github.io/plugins/auto-uv/#layout-preview) | [![Auto UV sample scene](plugins/auto-uv/images/sample-scene.jpg)](https://yuanqucool.github.io/plugins/auto-uv/#sample) |
 
-### Editing Control Points
+Every vertex channel is preserved — normals, tangents, vertex colours, UV0–UV7, skin weights,
+BindShapes, BlendShapes and submeshes — and the included sample scene unwraps three procedural
+meshes at runtime, with live chart and coverage statistics.
 
-In addition to editing nodes, you can also edit the control points of each node, which allows for more detailed control of the node shape.
-Hold down the `Ctrl` key on the keyboard to select multiple control points for editing.
+**Unity 6+** &nbsp;·&nbsp; [Documentation](https://yuanqucool.github.io/plugins/auto-uv/) &nbsp;·&nbsp; *Asset Store listing in review*
 
-![edit control point](./images/document/edit%20control%20point.gif)
+---
 
-### Color Brush
+## About this repository
 
-You can use the color brush to change the color of the selected node or selected control point. Click the Color Brush icon in front of the `color` Settings item to activate the color brush. Then, you can click on the nodes or control points in the scene to change their colors. Finally, you can click the `Mouse Right Button` to cancel the color brush.
+This is the static site behind **<https://yuanqucool.github.io/>** — the manuals, sample media and
+install notes for every package. Plain HTML, CSS and JavaScript, no build step, published by
+GitHub Pages from `main`.
 
-![color brush](./images/document/color%20brush.gif)
+- Plugin registry (cards, pagers, store links): [`js/plugins.js`](js/plugins.js)
+- Design system: [`css/site.css`](css/site.css) · behaviour: [`js/site.js`](js/site.js)
+- **Maintenance guide** — adding a plugin, writing docs, optimising media: [`docs/site-guide.md`](docs/site-guide.md)
 
-### Splicing Skeleton Meshes
+Found a problem in the documentation? [Open an issue](https://github.com/yuanqucool/yuanqucool.github.io/issues) or write to
+[yuanqucool@gmail.com](mailto:yuanqucool@gmail.com).
 
-After editing the skeleton, you can save the current skeleton mesh as a prefab. Switch to the mesh configuration item in the `Inspector`, select a skeleton mesh in the scene as the base, drag the skeleton mesh prefab to be spliced into the scene, and move it to select the nearest splicing port to perform splicing. During splicing, click the `Ctrl` key on the keyboard to change the port to be spliced, and hold down the `Alt` key on the keyboard to rotate the prefab.
-
-![splice skeleton mesh](./images/document/splice%20skeleton%20mesh.gif)
-
-If the skeleton mesh to be spliced is flipped, it will be spliced into the selected skeleton mesh's symmetric mesh.
-
-![splice flipped skeleton mesh](./images/document/splice%20flipped%20skeleton%20mesh.gif)
-
-### Bone Controller
-
-When a node is set as a bone, a `Transform` can be assigned to the current node's bone controller. After locking the current `skeleton mesh`, the mesh deformation can be controlled through this bone controller, achieving an effect similar to using `Skinned MeshRenderer`.
-
-![skeleton mesh bone controller](./images/document/skeleton%20mesh%20bone%20controller.gif)
-
-### Export
-
-The edited mesh supports exporting as a prefab, and you can choose whether to automatically generate bone binding.
-
-![skeleton mesh export](./images/document/skeleton%20mesh%20export.gif)
-
-## Runtime
-
-This tool provides runtime support and can dynamically create skeleton meshes through code.
-
-```csharp
-    [RequireComponent(typeof(SkeletonMesh))]
-    public class SampleSkeletonMesh : MonoBehaviour
-    {
-        private SkeletonMesh _skeletonMesh;
-
-        private void Awake()
-        {
-            _skeletonMesh = GetComponent<SkeletonMesh>();
-        }
-
-        private void Start()
-        {
-            var node1 = _skeletonMesh.RootNode.AddChild(Vector3.forward);
-            var node2 = node1.AddChild(new Vector3(1, 0, 1), 1f);
-            var node3 = node2.AddChild(new Vector3(1, 0, 2), 1f);
-        }
-    }
-```
-
-The above code can create a mesh as shown in the image below:
-
-![skeleton mesh runtime](./images/document/skeleton%20mesh%20runtime.png)
-
-## Samples
-
-### Tree Generator
-
-A procedural tree generator that automatically generates low-polygon tree models by adjusting the corresponding parameters. The entire tree is generated by single `SkeletonMesh` component.
-
-![Tree Generator](./images/document/tree%20generator.gif)
-
-At runtime, clicking the mouse plants a randomly generated tree, which gradually grows from small to large.
-
-<font color="red">`Note`: this example uses the new input system.</font>
-
-![tree planting and growing](./images/document/tree%20planting%20and%20growing.gif)
-
-### Monster Simulator (Runtime)
-
-A monster simulator that creates different monster models by piecing together different body parts. It also automatically generates skeletal rigging and adds procedural animations using the 'Animation Rigging' package, and includes serialization and storage functionality.
-
-<font color="red">`Note`: this example uses the new input system.</font>
-
-![monster generator](./images/document/monster%20generator.gif)
-
-The generated monsters can be archived in `json` format. 
-
-![monster save data](./images/document/monster%20save%20data.gif)
-
-### Wireframe Mesh Generator
-
-A procedural wireframe mesh generator that can generate a skeleton mesh model of the connection of mesh vertices and edges based on the existing mesh, and each vertex of the mesh generates a `SkeletonMesh` component.
-
-![wireframe mesh generator](./images/document/wireframe%20mesh%20generator.gif)
+<p align="center"><sub>© Yuan Qu Cool · Unity is a trademark of Unity Technologies.</sub></p>

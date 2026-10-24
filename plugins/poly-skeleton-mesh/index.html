@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Poly Skeleton Mesh — Documentation | Yuan Qu Cool</title>
+    <meta name="description" content="Documentation for Poly Skeleton Mesh: build low-poly meshes from a skeleton of nodes in Unity, splice meshes, rig with bone controllers and export prefabs.">
+    <meta name="theme-color" content="#fbfbfc">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Poly Skeleton Mesh — Documentation">
+    <meta property="og:description" content="Node-tree modeling, mesh splicing, bone controllers and prefab export for low-poly meshes in Unity.">
+    <meta property="og:image" content="images/cover.jpg">
+
+    <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/site.css">
+</head>
+
+<body class="page-doc accent--coral" data-plugin="poly-skeleton-mesh">
+<a class="skip-link" href="#overview">Skip to documentation</a>
+
+<header class="site-header">
+    <div class="wrap header-inner">
+        <a class="brand" href="../../index.html">
+            <img src="../../images/logo.png" width="28" height="28" alt="">
+            <span>Yuan Qu Cool</span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+            <a href="../../index.html#plugins">All plugins</a>
+            <a href="https://www.youtube.com/@YuanQuCool" target="_blank" rel="noopener">YouTube</a>
+            <a class="nav-cta" href="mailto:yuanqucool@gmail.com">Contact</a>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+
+    <header class="doc-hero">
+        <div class="wrap">
+            <a class="backlink" href="../../index.html#plugins">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                All plugins
+            </a>
+            <img class="doc-icon" src="../../images/logo.png" width="52" height="52" alt="">
+            <h1>Poly Skeleton Mesh</h1>
+            <p class="doc-tagline">
+                Build low-poly meshes from a tree of skeleton nodes: shape the silhouette in the
+                scene view, splice limbs together, deform with bone controllers and export a
+                self-contained prefab.
+            </p>
+            <div class="doc-meta">
+                <span class="pill pill--accent">Unity 6+</span>
+                <span class="pill">Editor tool</span>
+                <span class="pill">Runtime API</span>
+                <span class="pill">Burst · Collections</span>
+            </div>
+            <div class="doc-actions">
+                <a class="btn btn--primary" href="https://assetstore.unity.com/packages/slug/313559" target="_blank" rel="noopener">
+                    Asset Store
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 11 11 5m0 0H6m5 0v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <a class="btn btn--ghost" href="#overview">Start reading</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrap doc-layout">
+        <aside class="doc-toc" data-toc aria-label="On this page"></aside>
+
+        <article class="doc-content">
+            <div class="prose">
+
+                <section>
+                    <h2 id="overview">Overview</h2>
+                    <p class="lead">
+                        <strong>Poly Skeleton Mesh</strong> builds low-poly meshes from a tree of
+                        skeleton nodes. You shape the silhouette by placing nodes and setting their
+                        radius and cross-section, and the tool generates the hull between them.
+                        Skeleton meshes can be spliced together (a limb into a body, a branch into a
+                        trunk), subdivided, deformed by bone controllers, and exported as a
+                        self-contained prefab with a regular <code>MeshRenderer</code> or a rigged
+                        <code>SkinnedMeshRenderer</code>.
+                    </p>
+
+                    <ul class="feature-list">
+                        <li>Node-tree modeling with scene-view handles: move, rotate, scale, change parents, insert, split and merge.</li>
+                        <li>Quadrangle and octagon cross-sections with per-corner offset, sharpness and color.</li>
+                        <li>Symmetric editing along X, Y or Z with a configurable mirror center.</li>
+                        <li>Mesh splicing — ports connect automatically and the hull bridges both meshes.</li>
+                        <li>Subdivision levels 0–3 with per-corner creases, smooth or flat shading and flipped faces.</li>
+                        <li>Bone controllers and skinned export including mesh, bone hierarchy and bind poses.</li>
+                        <li>Prefab export with the mesh embedded as a sub-asset and optional lightmap UVs.</li>
+                        <li>GPU (compute shader) render path at runtime with an automatic CPU fallback.</li>
+                        <li>Runtime API to build, edit, connect, deform and export skeletons from code.</li>
+                    </ul>
+
+                    <figure class="media">
+                        <img src="images/skeleton-mesh-editor.png" width="1400" height="652" alt="The Poly Skeleton Mesh inspector in Skeleton mode, with a low-poly shape selected in the scene view and the global editor settings panel open." loading="lazy" decoding="async">
+                        <figcaption>
+                            The Skeleton / Mesh toggle at the top of the inspector switches between
+                            node editing and mesh settings. Handles are drawn directly in the scene
+                            view.
+                        </figcaption>
+                    </figure>
+
+                    <dl class="detail-grid">
+                        <div><dt>Engine</dt><dd>Unity 6+</dd></div>
+                        <div><dt>Assemblies</dt><dd>Runtime + Editor</dd></div>
+                        <div><dt>Rendering</dt><dd>GPU, CPU fallback</dd></div>
+                        <div><dt>Samples</dt><dd>5 scenes</dd></div>
+                    </dl>
+                </section>
+
+                <section>
+                    <h2 id="requirements">Requirements</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Requirement</th><th>Notes</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Unity 6+</td>
+                                    <td>Uses <code>Unity.Mathematics</code>, <code>Unity.Collections</code> and Burst jobs.</td>
+                                </tr>
+                                <tr>
+                                    <td>Burst + Collections + Mathematics</td>
+                                    <td>Shipped with Unity 6; Collections pulls in Burst.</td>
+                                </tr>
+                                <tr>
+                                    <td>Compute shader support</td>
+                                    <td>Used by the runtime render path. Platforms without it fall back to CPU generation automatically.</td>
+                                </tr>
+                                <tr>
+                                    <td>Input System (samples only)</td>
+                                    <td>The Tree Generator and Monster Simulator samples use it.</td>
+                                </tr>
+                                <tr>
+                                    <td>Animation Rigging (one sample)</td>
+                                    <td>The Monster Simulator drives its procedural animation with it.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 id="installation">Installation</h2>
+                    <p>
+                        Copy the <code>Assets/PolySkeletonMesh</code> folder into your project, or
+                        import the package. Nothing has to be configured.
+                    </p>
+<pre data-lang="Folder"><code>Assets/PolySkeletonMesh/
+  Runtime/       # SkeletonMesh component, data model, mesh generators
+  Editor/        # inspector, scene tools, exporter, benchmark
+  Samples/       # sample scenes (optional)
+  Documentation/ # this manual and its media (optional)</code></pre>
+                    <ul>
+                        <li><code>Runtime/PolySkeletonMesh.Runtime.asmdef</code> contains the component, the data model and the mesh generators.</li>
+                        <li><code>Editor/PolySkeletonMesh.Editor.asmdef</code> contains the inspector, scene tools, exporter and benchmark.</li>
+                        <li><code>Samples</code> and <code>Documentation</code> are optional and can be deleted.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 id="core-concepts">Core concepts</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Term</th><th>Meaning</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>SkeletonMesh</strong></td>
+                                    <td>Component that owns a node tree, its serialized skeleton data and the generated mesh. It renders the mesh itself — no <code>MeshRenderer</code> is required.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Node</strong></td>
+                                    <td>A point of the skeleton: local position, elliptical radius (X/Y), shape, color and an upward vector. Nodes form a tree with one root per mesh.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cross-section</strong></td>
+                                    <td>The ring around a node, defined by 4 (quadrangle) or 8 (octagon) <strong>control points</strong>. End nodes and N-joint roots get a cap from it.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Control point</strong></td>
+                                    <td>A corner of a cross-section with offset, sharpness (crease strength) and color.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Port</strong></td>
+                                    <td>A node flagged <em>Is Port</em>. Ports of two meshes splice when they are close enough. A port needs a shape: <code>Shape = None</code> nodes cannot splice.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Connection</strong></td>
+                                    <td>The automatic bond between two ports. It defines the hull that bridges the meshes and is rebuilt whenever the hierarchy or the ports change.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Subdivision</strong></td>
+                                    <td>Smoothing pass 0–3. Every level splits each quadrangle into four, so the face and vertex count grows about 4× per level.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bone controller</strong></td>
+                                    <td>A <code>Transform</code> bound to a bone node. While the skeleton is locked, moving it deforms the generated mesh.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Positions and radii are in the transform space of the
+                        <code>SkeletonMesh</code> component, so scaling or rotating the component
+                        moves the whole skeleton.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 id="quick-start">Quick start</h2>
+                    <ol>
+                        <li>Create the component with <strong>GameObject ▸ Poly Skeleton Mesh</strong> (shortcut <code>Ctrl+Shift+D</code>).</li>
+                        <li>In the inspector toolbar, switch to <strong>Skeleton</strong> mode.</li>
+                        <li>Select the root node and hold <strong>Shift</strong> while dragging the <strong>Position</strong> handle to create child nodes.</li>
+                        <li>Adjust <strong>Radius</strong>, <strong>Shape</strong> and <strong>Color</strong> in the node inspector; repeat until the silhouette is right.</li>
+                        <li>Switch to <strong>Mesh</strong> mode and assign a <strong>Material</strong> — the component draws nothing without one.</li>
+                        <li>Optionally set <strong>Subdivision</strong>, <strong>Is Smooth</strong> and <strong>Is Flipped</strong>.</li>
+                        <li>Open <strong>Unity Mesh Exporter</strong> and press <strong>Export</strong> to write a prefab.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h2 id="editor-guide">Editor guide</h2>
+                    <p>
+                        The inspector toolbar has two modes. <strong>Skeleton</strong> mode gives you
+                        node and control point handles, symmetry and bone controllers: Unity's
+                        built-in move, rotate and scale tools are replaced by the tool's own handles
+                        while that mode is active on a valid, unlocked scene mesh. <strong>Mesh</strong>
+                        mode holds material, subdivision, flip and smooth, locking, mirror and
+                        normalize buttons, splicing ports and export.
+                    </p>
+
+                    <h3 id="creating-a-skeleton-mesh">Creating a skeleton mesh</h3>
+                    <p>
+                        Use <strong>GameObject ▸ Poly Skeleton Mesh</strong> or the shortcut
+                        <code>Ctrl+Shift+D</code>. The new mesh starts with a root node plus one
+                        child. When a node is selected in Skeleton mode, the new mesh inherits that
+                        node's material, subdivision and orientation, and starts from its shape and
+                        radius — handy for continuing an existing limb with a separate mesh.
+                    </p>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="538" poster="images/create-skeleton-mesh-poster.jpg" aria-label="Creating a new skeleton mesh from the GameObject menu">
+                            <source src="images/create-skeleton-mesh.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Creating a mesh that continues the selected node's shape and radius.</figcaption>
+                    </figure>
+
+                    <h3 id="creating-nodes">Creating nodes</h3>
+                    <p>
+                        Select a node, make sure the <strong>Move</strong> tool is active (<code>W</code>),
+                        then hold <strong>Shift</strong> and drag the <strong>Position</strong> handle.
+                        A child node is created on mouse down and follows the drag; releasing the mouse
+                        commits it. With symmetry enabled, the matching symmetric node is created as
+                        well.
+                    </p>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="678" poster="images/create-node-poster.jpg" aria-label="Shift-dragging the position handle to create child nodes">
+                            <source src="images/create-node.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Shift-drag the position handle to extrude a new child node.</figcaption>
+                    </figure>
+
+                    <h3 id="editing-nodes">Editing nodes</h3>
+                    <ul>
+                        <li><strong>Ctrl + click</strong> another node to make the previously selected node a child of it. Cycles are rejected automatically.</li>
+                        <li>Use the <strong>Move</strong>, <strong>Rotate</strong> and <strong>Scale</strong> tools (<code>W</code>, <code>E</code>, <code>R</code>) to transform the selected node. <strong>Transform Mode</strong> in the settings decides whether the subtree follows.</li>
+                        <li>The node inspector gives numeric control over shape, position, radius, angle, color, ports and bones.</li>
+                    </ul>
+                    <div class="media-grid">
+                        <figure class="media">
+                            <video data-autoplay muted loop playsinline preload="none" width="1400" height="678" poster="images/change-node-parent-poster.jpg" aria-label="Ctrl-clicking a node to change its parent">
+                                <source src="images/change-node-parent.mp4" type="video/mp4">
+                            </video>
+                            <figcaption>Ctrl + click to re-parent the selection.</figcaption>
+                        </figure>
+                        <figure class="media">
+                            <video data-autoplay muted loop playsinline preload="none" width="1400" height="678" poster="images/transform-node-poster.jpg" aria-label="Transforming a node with the move, rotate and scale tools">
+                                <source src="images/transform-node.mp4" type="video/mp4">
+                            </video>
+                            <figcaption>Move, rotate and scale a node or its whole subtree.</figcaption>
+                        </figure>
+                    </div>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="678" poster="images/edit-node-settings-poster.jpg" aria-label="Editing node settings in the inspector">
+                            <source src="images/edit-node-settings.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Inspector values give precise control over shape, radius, angle and color.</figcaption>
+                    </figure>
+
+                    <h3 id="editing-control-points">Editing control points</h3>
+                    <p>
+                        Every cross-section corner can be edited individually. Hold <strong>Ctrl</strong>
+                        to add control points to the multi-selection, or press <strong>Edit Point</strong>
+                        in the node inspector to jump to the first one. The control point inspector
+                        exposes <strong>Offset</strong>, <strong>Sharpness</strong>, <strong>Color</strong>
+                        and <strong>Color Mix</strong>; scene handles move the points directly, and
+                        symmetric points follow automatically.
+                    </p>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="678" poster="images/edit-control-point-poster.jpg" aria-label="Moving cross-section control points">
+                            <source src="images/edit-control-point.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Per-corner offsets reshape the cross-section beyond the radius ring.</figcaption>
+                    </figure>
+
+                    <h3 id="scene-view-shortcuts">Scene view shortcuts</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Input</th><th>Action</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Left click</td><td>Select a node or a control point.</td></tr>
+                                <tr><td><strong>Ctrl</strong> + click a node</td><td>Make the previously selected node a child of the clicked node (<strong>Cmd</strong> on macOS).</td></tr>
+                                <tr><td><strong>Ctrl</strong> + click a control point</td><td>Add or remove that control point from the multi-selection.</td></tr>
+                                <tr><td><strong>Shift</strong> + drag the <strong>Position</strong> handle</td><td>Create a child node and drag it in one gesture.</td></tr>
+                                <tr><td><strong>W</strong> / <strong>E</strong> / <strong>R</strong></td><td>Move / Rotate / Scale tool for the selected node or control point.</td></tr>
+                                <tr><td><strong>Shift</strong> while editing an inspector field</td><td>Apply the edit to the subtree instead of the node only.</td></tr>
+                                <tr><td><strong>Alt</strong></td><td>Suppress handles temporarily (standard Unity behavior).</td></tr>
+                                <tr><td><strong>Alt</strong> while dragging a prefab (Mesh mode)</td><td>Rotate the prefab being spliced.</td></tr>
+                                <tr><td><strong>Ctrl</strong> while dragging a prefab (Mesh mode)</td><td>Switch the target port.</td></tr>
+                                <tr><td>Right mouse (color brush active)</td><td>Stop the color brush.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="symmetry">Symmetry</h3>
+                    <p>Symmetry is configured in the settings panel (<strong>Symmetric Space</strong>, <strong>Symmetric Axis</strong>):</p>
+                    <ul>
+                        <li><strong>Symmetric Space</strong> — <code>Self</code> mirrors around the edited mesh transform, <code>Root</code> around the root mesh transform, and <code>Custom</code> around the transform assigned to <strong>Symmetric Center</strong>.</li>
+                        <li><strong>Symmetric Axis</strong> — <code>X</code>, <code>Y</code>, <code>Z</code> or <code>None</code>.</li>
+                        <li>Symmetric nodes are highlighted with their own color; editing a node or control point also edits its symmetric counterpart, and <strong>Mirror Flip</strong> creates a mirrored copy of the mesh across the axis.</li>
+                        <li><strong>Set To Symmetric Center</strong> stores the current mesh as the custom center.</li>
+                        <li><strong>Mirror Flip</strong> requires a symmetric axis other than <code>None</code>; <strong>Normalize Scale</strong> is independent of symmetry.</li>
+                    </ul>
+
+                    <h3 id="color-brush">Color brush</h3>
+                    <p>
+                        Click the small brush icon next to a <strong>Color</strong> field to activate the
+                        brush, then click nodes or control points in the scene to paint them.
+                        Right-click to leave the brush. Painting writes the color (and color mix) of
+                        the painted element and of its symmetric counterpart.
+                    </p>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="678" poster="images/color-brush-poster.jpg" aria-label="Painting node colors with the color brush">
+                            <source src="images/color-brush.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Painting vertex colors directly in the scene view.</figcaption>
+                    </figure>
+
+                    <h3 id="splitting-and-merging">Splitting and merging meshes</h3>
+                    <ul>
+                        <li><strong>Split</strong> (node inspector) moves the selected node and its subtree into a new <code>SkeletonMesh</code> parented under the current one. Use it to break one mesh into several parts, for example to give a limb its own bones or subdivision. It requires a node that is neither the root nor an end node.</li>
+                        <li><strong>Merge</strong> (node inspector) merges the selected node into its parent node. For a connected root node the merge goes into the connected mesh; the editor then re-parents the remaining child meshes and removes the old mesh.</li>
+                        <li>Both operations are undoable.</li>
+                    </ul>
+
+                    <h3 id="splicing">Splicing skeleton meshes</h3>
+                    <p>Splicing is spatial and automatic:</p>
+                    <ol>
+                        <li>Save the mesh you want to attach as a prefab, or keep another mesh in the scene.</li>
+                        <li>Put a <code>SkeletonMesh</code> <strong>port</strong> on both sides: tick <strong>Is Port</strong> on a node and set <strong>Connection Radius</strong> large enough to reach the other port. Port nodes need a cross-section, so their shape cannot be <code>None</code>.</li>
+                        <li>Parent the child mesh under the target mesh in the hierarchy and move it so the two ports come close. The nearest matching ports connect automatically and the hull bridges them; the port colors show unconnected, connected and selected states.</li>
+                        <li>While dragging a prefab from the Project window, hold <strong>Alt</strong> to rotate it and <strong>Ctrl</strong> to change the target port.</li>
+                        <li>When symmetry is active the preview also shows a mirrored copy of the dragged mesh, and the drop creates that copy too. A mesh whose <strong>Is Flipped</strong> state differs from the target is spliced in the opposite direction so both hulls meet correctly.</li>
+                    </ol>
+                    <p>
+                        The component lists <code>FromConnections</code> and <code>ToConnections</code>
+                        expose the result, which is useful for debugging.
+                    </p>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="670" poster="images/splice-skeleton-mesh-poster.jpg" aria-label="Splicing a prefab mesh into a body mesh">
+                            <source src="images/splice-skeleton-mesh.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Dragging a ported prefab onto a matching port: the hull bridges both meshes.</figcaption>
+                    </figure>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="676" poster="images/splice-flipped-skeleton-mesh-poster.jpg" aria-label="Splicing a flipped skeleton mesh into its symmetric side">
+                            <source src="images/splice-flipped-skeleton-mesh.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>A flipped mesh is spliced in the opposite direction to keep the surface continuous.</figcaption>
+                    </figure>
+
+                    <h3 id="bone-controllers">Bone controllers</h3>
+                    <p>To animate a generated mesh:</p>
+                    <ol>
+                        <li>Tick <strong>Is Bone</strong> on a node (or call <code>SetBone("Name")</code> from code) and set a <strong>Bone Name</strong> if you need one.</li>
+                        <li>Press <strong>New</strong> next to <strong>Bone Controller</strong> to create a <code>Transform</code> for the node, or assign an existing transform. <strong>Update</strong> re-applies the rest pose to the existing controller.</li>
+                        <li>Tick <strong>Is Skeleton Locked</strong> in Mesh mode. While locked the skeleton cannot be edited, but the bone controllers deform the mesh like a <code>SkinnedMeshRenderer</code> driven by a rig.</li>
+                    </ol>
+                    <p>Bone controller handles are drawn in the scene view and can be selected directly.</p>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="560" poster="images/bone-controller-poster.jpg" aria-label="Deforming a locked skeleton mesh with a bone controller">
+                            <source src="images/bone-controller.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>A locked skeleton deformed through its bone controller.</figcaption>
+                    </figure>
+
+                    <h3 id="exporting">Exporting a prefab</h3>
+                    <p>In <strong>Mesh</strong> mode, on the root mesh, open <strong>Unity Mesh Exporter</strong>:</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Option</th><th>Effect</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Is Generate Bone</strong></td>
+                                    <td>Exports a <code>SkinnedMeshRenderer</code> instead of a <code>MeshFilter</code> + <code>MeshRenderer</code>. The prefab gets a <code>Skeleton</code> child that holds the generated bone hierarchy (names come from <strong>Bone Name</strong>, falling back to <code>Bone{index} (Node{index})</code>) and a <code>SkinnedMesh</code> child with the renderer.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Is Generate UV</strong></td>
+                                    <td>Generates a secondary (lightmap) UV set and moves it into the primary UV channel of the exported mesh.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Export</strong></td>
+                                    <td>Asks for a <code>.prefab</code> path, writes the prefab and selects it.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Details worth knowing:</p>
+                    <ul>
+                        <li>The generated mesh is stored <strong>as a sub-asset of the prefab</strong>.</li>
+                        <li>Export uses the root mesh and includes all child meshes in the hierarchy, including spliced ones.</li>
+                        <li>Export does not add colliders, scripts or LOD groups; add those to the exported prefab if needed.</li>
+                        <li>The last used folder is remembered in the editor settings.</li>
+                        <li>Exported prefabs get a generated thumbnail in the Project window, and selecting the prefab asset shows an interactive preview in the inspector (drag to rotate, scroll to zoom, drag the splitter to resize).</li>
+                    </ul>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="702" poster="images/skeleton-mesh-export-poster.jpg" aria-label="Exporting the mesh as a prefab with generated bones and UVs">
+                            <source src="images/skeleton-mesh-export.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Exporting a prefab with generated bones and lightmap UVs.</figcaption>
+                    </figure>
+                </section>
+
+                <section>
+                    <h2 id="inspector-reference">Inspector reference</h2>
+                    <p>The mesh inspector in <strong>Mesh</strong> mode contains:</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Field / button</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Material</strong></td><td>Material used by the component to draw the generated mesh. Without it nothing is drawn. Exported meshes get one material per submesh (<code>ToUnityMesh</code> returns the array).</td></tr>
+                                <tr><td><strong>Subdivision</strong></td><td>0–3. Every level splits each quadrangle into four. Higher levels are smoother and much heavier.</td></tr>
+                                <tr><td><strong>Is Flipped</strong></td><td>Flips the face orientation and normals of the generated mesh.</td></tr>
+                                <tr><td><strong>Is Smooth</strong></td><td>Averages vertex normals for smooth shading; disable for flat-shaded low-poly looks.</td></tr>
+                                <tr><td><strong>Is Skeleton Locked</strong></td><td>Locks the skeleton (no node or control point editing) so bone controllers can deform the mesh.</td></tr>
+                                <tr><td><strong>Normalize Scale</strong></td><td>Bakes the world scale of the hierarchy into the node data and resets the transforms to scale 1, so non-uniform scaling no longer distorts the mesh.</td></tr>
+                                <tr><td><strong>Mirror Flip</strong></td><td>Creates a mirrored copy of the mesh across the configured symmetric axis. Requires a symmetric axis.</td></tr>
+                                <tr><td><strong>Set To Symmetric Center</strong></td><td>Stores this mesh as the custom symmetry center.</td></tr>
+                                <tr><td><strong>To Root</strong> / <strong>To Parent</strong></td><td>Selects the root or parent mesh of the hierarchy.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>In Skeleton mode the inspector shows the node or control point editor instead (see below).</p>
+                </section>
+
+                <section>
+                    <h2 id="editor-settings">Editor settings panel</h2>
+                    <p>
+                        The settings asset is created automatically at
+                        <code>Assets/Settings/SkeletonMeshEditorSettings.asset</code> on first use; it
+                        is found by type if it lives elsewhere. It stores view and handle preferences
+                        and the last export folder. Its content depends on the current mode and on
+                        whether the selected mesh is locked.
+                    </p>
+
+                    <h3 id="symmetry-settings">Symmetry settings</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Setting</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Symmetric Space</strong> / <strong>Symmetric Axis</strong></td><td>Mirror configuration, see <a href="#symmetry">Symmetry</a>.</td></tr>
+                                <tr><td><strong>Symmetric Center</strong></td><td>Custom mirror transform, only for <code>Symmetric Space = Custom</code>. It is a scene object reference, so it is re-resolved after a domain reload.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="skeleton-editor-settings">Skeleton editor settings</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Setting</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Transform Mode</strong></td><td><code>Self</code> transforms only the selected node, <code>SelfAndChildren</code> transforms the node with its whole subtree. Holding <strong>Shift</strong> while editing a value in the node inspector overrides it for that edit.</td></tr>
+                                <tr><td><strong>Node Handles Size</strong></td><td>Size of node handles.</td></tr>
+                                <tr><td><strong>Root / End / Two Joint / N Joint / Selected / Symmetric Node Color</strong></td><td>Node handle colors by role.</td></tr>
+                                <tr><td><strong>Is Show Point Handles</strong></td><td>Draw control point handles.</td></tr>
+                                <tr><td><strong>Only Show Selected Node Points</strong></td><td>Only draw control points of the selected (or symmetric) node.</td></tr>
+                                <tr><td><strong>Point Handles Size</strong>, <strong>Default / Selected / Symmetric Point Color</strong></td><td>Control point handle appearance.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="mesh-editor-settings">Mesh editor settings</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Setting</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Is Show Port Handles</strong></td><td>Draw splicing port handles.</td></tr>
+                                <tr><td><strong>Is Show Connection Radius</strong></td><td>Draw the connection radius of ports.</td></tr>
+                                <tr><td><strong>Port Handles Size</strong></td><td>Size of port handles.</td></tr>
+                                <tr><td><strong>Not Connected / Connected / Selected Port Color</strong></td><td>Port state colors.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="bone-controller-settings">Bone controller settings</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Setting</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Is Show Bone Controller</strong></td><td>Draw bone controller handles (shown while the selected mesh is locked).</td></tr>
+                                <tr><td><strong>Bone Controller Handles Size / Color</strong></td><td>Bone controller handle appearance.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 id="node-reference">Node &amp; control point reference</h2>
+
+                    <h3 id="node-inspector">Node inspector</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Field / button</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Shape</strong></td><td><code>Quadrangle</code> (4 control points), <code>Octagon</code> (8) or <code>None</code> (no cross-section; the node only shapes the hull between its neighbours and cannot be a port).</td></tr>
+                                <tr><td><strong>Position</strong></td><td>Local position inside the mesh. Hold <strong>Shift</strong> while editing to move the subtree.</td></tr>
+                                <tr><td><strong>Radius</strong></td><td>Elliptical cross-section radius (X/Y). The link icon keeps the X/Y ratio locked while editing; hold <strong>Shift</strong> to apply the change to the subtree.</td></tr>
+                                <tr><td><strong>Angle</strong></td><td>Rotation of the cross-section around the node direction.</td></tr>
+                                <tr><td><strong>Color</strong>, <strong>Color Mix</strong></td><td>Vertex color and blend ratio towards the parent node color.</td></tr>
+                                <tr><td><strong>Is Port</strong>, <strong>Connection Radius</strong></td><td>Marks the node as a splicing port and sets how far apart two ports may be to connect.</td></tr>
+                                <tr><td><strong>Is Bone</strong>, <strong>Bone Name</strong></td><td>Marks the node as a deformable bone and names it.</td></tr>
+                                <tr><td><strong>Bone Controller</strong>, <strong>New</strong>, <strong>Update</strong></td><td>Bind, create or refresh the transform that drives the bone.</td></tr>
+                                <tr><td><strong>To Root</strong>, <strong>To Parent</strong></td><td>Select the root or parent node.</td></tr>
+                                <tr><td><strong>Insert</strong></td><td>Insert a node between this node and its parent.</td></tr>
+                                <tr><td><strong>Delete</strong></td><td>Delete this node and its subtree.</td></tr>
+                                <tr><td><strong>Split</strong></td><td>Move this node and its subtree into a new child <code>SkeletonMesh</code>.</td></tr>
+                                <tr><td><strong>Merge</strong></td><td>Merge this node into its parent, or into the connected mesh for a connected root.</td></tr>
+                                <tr><td><strong>Set To Pivot</strong></td><td>Move the skeleton so this node sits at the mesh pivot (origin).</td></tr>
+                                <tr><td><strong>Edit Point</strong></td><td>Select the first control point of this node.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="control-point-inspector">Control point inspector</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Field / button</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Offset</strong></td><td>Offset of the corner relative to its default position on the radius ring.</td></tr>
+                                <tr><td><strong>Sharpness</strong></td><td>0 = fully smoothed crease, 1 = keeps the corner sharp. Blended into the subdivision.</td></tr>
+                                <tr><td><strong>Color</strong>, <strong>Color Mix</strong></td><td>Corner vertex color and blend ratio towards the node color.</td></tr>
+                                <tr><td><strong>Prev</strong>, <strong>Next</strong>, <strong>To Node</strong></td><td>Navigate between the control points or back to the node.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 id="runtime">Runtime guide</h2>
+                    <p>Add <code>using PolySkeletonMesh.Runtime;</code> to your script.</p>
+
+                    <h3 id="build-from-code">Build a skeleton from code</h3>
+<pre data-lang="C#"><code>using PolySkeletonMesh.Runtime;
+using UnityEngine;
+
+[RequireComponent(typeof(SkeletonMesh))]
+public class RuntimeSkeleton : MonoBehaviour
+{
+    private SkeletonMesh _mesh;
+
+    private void Awake()
+    {
+        _mesh = GetComponent&lt;SkeletonMesh&gt;();
+    }
+
+    private void Start()
+    {
+        // A material is required; pick a shader from your render pipeline.
+        _mesh.Material = new Material(Resources.Load&lt;Shader&gt;("Wireframe Vertex Color"));
+        _mesh.Subdivision = 1;
+
+        // Node positions are local to the SkeletonMesh transform.
+        var chest = _mesh.RootNode.AddChild(new Vector3(0f, 0f, 1f), new Vector2(0.5f, 0.5f));
+        var head = chest.AddChild(new Vector3(0f, 0f, 2f), new Vector2(0.4f, 0.4f));
+        head.SetColor(Color.yellow, 0.5f);
+
+        // The readable CPU mesh (colliders, export, custom renderers).
+        var mesh = _mesh.GeneratedMesh;
+        Debug.Log($"{mesh.vertexCount} vertices in {mesh.subMeshCount} submesh(es)");
+    }
+}</code></pre>
+                    <p>
+                        Convenience overloads exist for the common cases:
+                        <code>AddChild(position, radius)</code>, <code>AddChild(position, shape)</code>,
+                        <code>AddChild(radius)</code> and <code>AddChild(shape)</code>.
+                        <code>SetPosition</code>, <code>SetRadius</code>, <code>SetColor</code>,
+                        <code>SetBone</code> and friends return the node for chaining.
+                    </p>
+                    <p>The example above creates a mesh like this:</p>
+                    <figure class="media">
+                        <img src="images/skeleton-mesh-runtime.png" width="1200" height="990" alt="A triangulated low-poly torso and head built from code with the runtime API." loading="lazy" decoding="async">
+                        <figcaption>Three chained nodes with elliptical radii, generated at runtime.</figcaption>
+                    </figure>
+
+                    <h3 id="mesh-data">Mesh data</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Member</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>GeneratedMesh</code></td><td>CPU-generated readable <code>Mesh</code>. Rebuilds when dirty, so do not read it every frame. Use it for export, colliders or custom renderers.</td></tr>
+                                <tr><td><code>HalfMesh</code></td><td>Half-edge representation (<code>SkinnedHalfMesh</code>) used by the generators.</td></tr>
+                                <tr><td><code>Bones</code></td><td>Bone list (<code>Bone</code> with node, index, parent index, name, controller and rest position/rotation).</td></tr>
+                                <tr><td><code>ToWorldMatrix</code> / <code>ToLocalMatrix</code></td><td>Conversion between the skeleton space and world space.</td></tr>
+                                <tr><td><code>Nodes</code>, <code>NodeCount</code>, <code>GetNode(i)</code>, <code>RootNode</code></td><td>The node tree.</td></tr>
+                                <tr><td><code>FromConnections</code> / <code>ToConnections</code></td><td>Connections into and out of this mesh.</td></tr>
+                                <tr><td><code>IsSkeletonValid</code></td><td>False when the serialized skeleton data failed to load. Public API access throws in that state.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        The component renders itself with <code>Graphics.DrawMesh</code> in
+                        <code>LateUpdate</code>; it does not create a <code>MeshRenderer</code>, so
+                        renderer-based features such as light probes through a renderer or static
+                        batching do not apply to it. Export a prefab if you need a regular renderer.
+                    </p>
+
+                    <h3 id="lock-and-deform">Lock and deform with bone controllers</h3>
+<pre data-lang="C#"><code>var boneNode = _mesh.GetNode(1).SetBone("Chest");
+
+// Creates a "&lt;name&gt; (Controller)" Transform in the mesh hierarchy and binds it to the node.
+// Use boneNode.SetBoneController(existingTransform) to bind your own instead.
+var controller = boneNode.CreateBoneController();
+
+// While locked, node edits are rejected and the controller drives the mesh.
+_mesh.IsSkeletonLocked = true;
+
+// Then animate the controller from your own script, a Timeline or an Animator:
+controller.localRotation = Quaternion.Euler(0f, 30f, 0f);</code></pre>
+                    <p>
+                        <code>ResetBoneController()</code> restores the rest pose of a controller.
+                        While the skeleton is locked, any node or control point edit throws
+                        <code>InvalidOperationException("skeleton is locked, can not edit.")</code>.
+                    </p>
+
+                    <h3 id="splice-at-runtime">Splice at runtime</h3>
+                    <p>
+                        Splicing needs two meshes in a parent/child transform hierarchy, each with a
+                        port node close enough to the other:
+                    </p>
+<pre data-lang="C#"><code>var body = _mesh;                                   // existing mesh
+var socket = body.GetNode(1);
+socket.SetIsPort(true).SetConnectionRadius(0.6f);   // socket node needs a shape
+
+var limbGo = new GameObject("Limb");
+limbGo.transform.SetParent(body.transform, false);
+limbGo.transform.localPosition = socket.Position;
+var limb = limbGo.AddComponent&lt;SkeletonMesh&gt;();
+limb.Material = body.Material;
+limb.RootNode.SetShape(NodeShape.Quadrangle).SetRadius(0.4f);
+limb.RootNode.AddChild(new Vector3(0f, 0f, 0.6f), new Vector2(0.4f, 0.4f))
+    .SetIsPort(true)
+    .SetConnectionRadius(0.6f);
+
+// Connections are rebuilt on demand; inspect the result.
+foreach (var connection in body.FromConnections)
+{
+    Debug.Log($"{connection.FromNode.Index} -&gt; {connection.ToNode.Index}");
+}</code></pre>
+
+                    <h3 id="export-from-code">Export from code</h3>
+<pre data-lang="C#"><code>// A GameObject with MeshFilter + MeshRenderer, or SkinnedMeshRenderer + bones when isGenerateBone is true.
+var exported = _mesh.GenerateUnityMeshObject(isGenerateBone: true, isIncludingChildren: true);
+
+// Or the raw data: mesh + one material per submesh + the bone transforms.
+var mesh = _mesh.ToUnityMesh(out var materials, out var bones, isIncludingChildren: true);</code></pre>
+                    <p>
+                        <code>ToUnityMesh(out materials, out bones)</code> always generates bone data;
+                        the overload without <code>bones</code> only generates it for a locked
+                        skeleton. The exported objects are plain scene objects — in the editor, save
+                        them with <code>PrefabUtility.SaveAsPrefabAsset</code>, which is what the
+                        Export button does, including embedding the mesh as a sub-asset.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 id="mesh-generation">Mesh generation details</h2>
+                    <ul>
+                        <li><strong>Hull</strong> — every node contributes its cross-section to the hull of its parent–child segment. End nodes and N-joint roots get a cap; internal nodes are bridged smoothly.</li>
+                        <li><strong>Connections</strong> — a spliced port pair creates an extra hull segment between the two meshes, so the surface is continuous across the splice, including flipped and same-direction connections.</li>
+                        <li><strong>Subdivision</strong> (0–3) — one Catmull-Clark-like pass per level; each quadrangle becomes four. Per-control-point <strong>Sharpness</strong> blends the smoothed position with the original corner, which is how creases are kept.</li>
+                        <li><strong>Normals</strong> — flat shading derives one normal per face; <strong>Is Smooth</strong> averages the face normals around each vertex (flipped faces contribute negated normals).</li>
+                        <li><strong>Colors</strong> — vertex colors come from node colors blended by <strong>Color Mix</strong> and from control point colors.</li>
+                        <li><strong>Submeshes</strong> — meshes with different materials produce one submesh per material; the hull is split accordingly.</li>
+                        <li><strong>Bounds</strong> — the CPU mesh recalculates bounds exactly; the GPU path uses a conservative bound derived from the bone matrices so animated parts are not culled.</li>
+                        <li><strong>UVs</strong> — the generated mesh has no authored UVs. Use <strong>Is Generate UV</strong> on export to create a lightmap UV layout, or generate UVs with your own tooling.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 id="performance">Performance</h2>
+                    <p>
+                        <code>SkeletonMesh</code> generates the render mesh on the GPU (compute
+                        shader) at runtime and only falls back to the CPU path when compute shaders
+                        are unavailable. The CPU path is used for <code>GeneratedMesh</code> (export,
+                        colliders, editor preview) and for skinned bone updates.
+                    </p>
+                    <p>Measured on an i7-10700K / RTX 3080 at subdivision 3 (Unity 6.3, editor build):</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Chained nodes</th>
+                                    <th>Vertices</th>
+                                    <th>Render rebuild</th>
+                                    <th>CPU rebuild</th>
+                                    <th>Bone update</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>20</td><td>21k</td><td>~0.2 ms</td><td>~5.6 ms</td><td>~0.3 ms</td></tr>
+                                <tr><td>100</td><td>103k</td><td>~0.9 ms</td><td>~26 ms</td><td>~1.3 ms</td></tr>
+                                <tr><td>200</td><td>205k</td><td>~1.8 ms</td><td>~53 ms</td><td>~4.2 ms</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Guidelines:</p>
+                    <ul>
+                        <li>Runtime rendering is cheap; the CPU path is the expensive one. Avoid reading <code>GeneratedMesh</code> every frame, for example to rebuild colliders — it is meant for export and editor tooling.</li>
+                        <li>Subdivision grows the face and vertex count by about 4× per level. A 200-node chain at subdivision 3 already produces ~205k vertices; keep the level low for large skeletons and let the GPU path draw the render mesh.</li>
+                        <li>A locked skeleton is only rebuilt when a bone controller actually moved, so idle animated meshes cost almost nothing.</li>
+                        <li>Locking applies the bone pose before subdivision, so the first build of a skinned mesh costs the same single pipeline pass as an unskinned build.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 id="benchmark">Benchmark tool</h2>
+                    <p>
+                        A baseline benchmark lives in
+                        <code>Editor/Diagnostics/SkeletonMeshBenchmark.cs</code>. Define
+                        <code>POLY_SKELETON_MESH_DEV</code> (Project Settings ▸ Player ▸ Scripting
+                        Define Symbols) to compile it, then run
+                        <strong>Tools ▸ Poly Skeleton Mesh ▸ Run Benchmark</strong>. The report is
+                        written to <code>Temp/Benchmark/polyskeletonmesh-benchmark.md</code> and covers
+                        first build, dirty rebuild, half-mesh generation, skinned build, incremental
+                        bone update, export and JSON serialization, including managed allocations per
+                        operation.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 id="samples">Samples</h2>
+                    <p>
+                        <code>Samples/Default/Defalt Samples.unity</code> is a showcase scene with
+                        several prepared skeletons (basic shapes and hollow shells) to explore the
+                        tool without building anything. The three feature samples below live next to
+                        it.
+                    </p>
+
+                    <h3 id="tree-generator">Tree Generator</h3>
+                    <p>
+                        A procedural tree generator that builds a low-poly tree from a handful of
+                        parameters; the whole tree is a single <code>SkeletonMesh</code> component.
+                    </p>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="638" poster="images/tree-generator-poster.jpg" aria-label="A procedural low-poly tree generated with adjustable parameters">
+                            <source src="images/tree-generator.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Trunk, branch and canopy settings generate the whole tree.</figcaption>
+                    </figure>
+                    <p>Clicking with the mouse plants a randomly generated tree that grows from small to large.</p>
+                    <aside class="note">
+                        <strong>Note</strong>
+                        <span>This sample uses the Input System.</span>
+                    </aside>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="756" poster="images/tree-planting-poster.jpg" aria-label="Clicking to plant trees that grow over time">
+                            <source src="images/tree-planting.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Click-to-plant trees with a growth animation at runtime.</figcaption>
+                    </figure>
+
+                    <h3 id="monster-simulator">Monster Simulator</h3>
+                    <p>
+                        Pieces different body parts into a monster, generates its rig and adds
+                        procedural animation with the Animation Rigging package. Monsters can be
+                        archived as <code>json</code>.
+                    </p>
+                    <aside class="note">
+                        <strong>Note</strong>
+                        <span>This sample uses the Input System and the Animation Rigging package.</span>
+                    </aside>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="910" poster="images/monster-generator-poster.jpg" aria-label="Building a monster from body parts with generated rig and procedural animation">
+                            <source src="images/monster-generator.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Body-part selection, automatic rigging and procedural animation.</figcaption>
+                    </figure>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="910" poster="images/monster-save-data-poster.jpg" aria-label="Saving and loading generated monsters as json">
+                            <source src="images/monster-save-data.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Monsters are serialized to JSON and restored later.</figcaption>
+                    </figure>
+
+                    <h3 id="wireframe-generator">Wireframe Mesh Generator</h3>
+                    <p>
+                        Converts an existing mesh into a wireframe skeleton: every vertex becomes a
+                        <code>SkeletonMesh</code> and every edge becomes a node chain, so the
+                        wireframe thickness and color can be edited like any other skeleton.
+                    </p>
+                    <figure class="media">
+                        <video data-autoplay muted loop playsinline preload="none" width="1400" height="688" poster="images/wireframe-generator-poster.jpg" aria-label="Converting an existing mesh into an editable wireframe skeleton">
+                            <source src="images/wireframe-generator.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Any mesh becomes an editable wireframe skeleton.</figcaption>
+                    </figure>
+
+                    <h3 id="sample-scenes">Sample scenes</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Scene</th><th>Contents</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>Samples/Default/Defalt Samples.unity</code></td><td>Showcase with several prepared skeletons.</td></tr>
+                                <tr><td><code>Samples/TreeGenerator/Tree Generator.unity</code></td><td>Tree generator with adjustable parameters.</td></tr>
+                                <tr><td><code>Samples/TreeGenerator/GrowingTree.unity</code></td><td>Click-to-plant trees with the growth animation.</td></tr>
+                                <tr><td><code>Samples/MonsterSimulator/Monster Simulator (Runtime).unity</code></td><td>Body-part monster builder with IK, procedural animation and save data.</td></tr>
+                                <tr><td><code>Samples/WireframeMeshGenerator/Wireframe Mesh Generator.unity</code></td><td>Wireframe conversion of an existing mesh.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 id="troubleshooting">Troubleshooting</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Message / symptom</th><th>Cause and fix</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>PolySkeletonMesh: the skeleton data is invalid, so this component refused to load.</code></td>
+                                    <td>The serialized skeleton JSON is corrupt or has no root. Restore the asset from version control or recreate the skeleton. The inspector shows an error box and the component blocks public API access until the data is repaired.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>[PolySkeletonMesh] The bone controller list (N) is longer than the node list (M); the extra controller references were dropped.</code></td>
+                                    <td>A legacy or interrupted undo/redo state paired a controller list with a different node count. The list is trimmed automatically; save the scene to persist the repair. The message appears only when a non-null controller reference is actually dropped.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>[PolySkeletonMesh] Compute shaders are not supported on this platform (or the CPU fallback was forced); the render mesh is generated on the CPU.</code></td>
+                                    <td>Informational. The runtime render path fell back to the CPU; everything still works, at a higher CPU cost.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>InvalidOperationException: skeleton is locked, can not edit.</code></td>
+                                    <td>Uncheck <strong>Is Skeleton Locked</strong> before editing nodes or control points.</td>
+                                </tr>
+                                <tr>
+                                    <td>The mesh is invisible</td>
+                                    <td>No <strong>Material</strong> assigned (the component draws nothing without one), the object is disabled, or the skeleton has no faces (all nodes have <code>Shape = None</code>).</td>
+                                </tr>
+                                <tr>
+                                    <td>Splicing does not connect</td>
+                                    <td>Both nodes must be ports with a shape, be within each other's <strong>Connection Radius</strong>, and the child mesh must be parented under the target mesh transform.</td>
+                                </tr>
+                                <tr>
+                                    <td>Node handles do not appear</td>
+                                    <td>The inspector is in <strong>Mesh</strong> mode, the mesh is a prefab asset (open it in prefab mode), the skeleton is locked, or the object is inactive.</td>
+                                </tr>
+                                <tr>
+                                    <td>No <strong>Export</strong> section</td>
+                                    <td>Export is only shown in <strong>Mesh</strong> mode on the root mesh of an active hierarchy.</td>
+                                </tr>
+                                <tr>
+                                    <td>Edits are rejected while a prefab is selected</td>
+                                    <td>Prefab assets are edited in prefab isolation mode; scene handles only work on scene instances.</td>
+                                </tr>
+                                <tr>
+                                    <td>The node or control point selection resets</td>
+                                    <td>The selection is stored in the editor settings asset. Deleting or moving <code>SkeletonMeshEditorSettings.asset</code> resets it; a new one is created under <code>Assets/Settings</code> on the next use.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 id="limitations">Known limitations</h2>
+                    <ul>
+                        <li>The data model is a tree: a node has exactly one parent and any number of children.</li>
+                        <li>Ports are matched spatially; there is no explicit "connect these two nodes" API. Overlapping ports resolve to the nearest valid pair.</li>
+                        <li>Connection rebuilding walks the mesh hierarchy on the main thread; avoid moving or re-parenting many spliced meshes every frame.</li>
+                        <li>The component renders through <code>Graphics.DrawMesh</code>, so it does not appear as a renderer in the hierarchy and does not participate in renderer-based batching or GPU instancing.</li>
+                        <li>Colliders are not generated; bake a <code>MeshCollider</code> from <code>GeneratedMesh</code> or add primitive colliders to the exported prefab instead.</li>
+                        <li>Skeleton data is serialized as JSON inside the component. Do not hand-edit it; corrupt data blocks loading by design.</li>
+                    </ul>
+                </section>
+
+            </div>
+
+            <nav class="plugin-pager" data-plugin-pager aria-label="More plugins"></nav>
+        </article>
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <div class="wrap footer-inner">
+        <a class="footer-brand" href="../../index.html">
+            <img src="../../images/logo.png" width="24" height="24" alt="">
+            <span>Yuan Qu Cool</span>
+        </a>
+        <nav class="footer-links" aria-label="Footer">
+            <a href="../../index.html#plugins">Plugins</a>
+            <a href="https://www.youtube.com/@YuanQuCool" target="_blank" rel="noopener">YouTube</a>
+            <a href="mailto:yuanqucool@gmail.com">yuanqucool@gmail.com</a>
+        </nav>
+        <p class="footer-note">
+            © <span data-year>2026</span> Yuan Qu Cool. Unity is a trademark of Unity Technologies.
+        </p>
+    </div>
+</footer>
+
+<script src="../../js/plugins.js"></script>
+<script src="../../js/site.js"></script>
+</body>
+</html>

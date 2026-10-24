@@ -1,125 +1,99 @@
-<!DOCTYPE HTML>
-<html lang="">
+<!DOCTYPE html>
+<html lang="en" class="no-js">
 <head>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/>
     <meta charset="utf-8">
-    <title>Yuan Qu Cool (Poly Skeleton Mesh)</title>
-    <link href="images/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Yuan Qu Cool — Unity tools for procedural 3D</title>
+    <meta name="description" content="Unity editor tools and runtime packages by Yuan Qu Cool: Poly Skeleton Mesh builds low-poly meshes from a skeleton of nodes, Auto UV generates clean non-overlapping UV sets for any mesh.">
+    <meta name="theme-color" content="#fbfbfc">
 
-    <link href="css/style.css" rel="stylesheet" type="text/css">
-    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="css/responsive.css" rel="stylesheet" type="text/css">
-    <link href="css/fontawesome.min.css" rel="stylesheet" type="text/css">
-    <link href="css/effects/set2.css" rel="stylesheet" type="text/css">
-    <link href="css/effects/normalize.css" rel="stylesheet" type="text/css">
-    <link href="css/effects/component.css" rel="stylesheet" type="text/css">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Yuan Qu Cool — Unity tools for procedural 3D">
+    <meta property="og:description" content="Poly Skeleton Mesh and Auto UV: focused Unity packages for node-based mesh generation and runtime UV unwrapping.">
+    <meta property="og:image" content="plugins/poly-skeleton-mesh/images/cover.jpg">
+
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/site.css">
 </head>
 
-<body>
-<!-- main -->
-<main class="container" role="main-inner-wrapper">
-    <!-- work details -->
-    <div class="work-details">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <header role="work-title">
-                    <h2>Poly Skeleton Mesh</h2>
-                    <a href="https://assetstore.unity.com/packages/slug/313559">Asset Store<i class="fa fa-shopping-cart"></i></a>
-                    <a class="col-xs-offset-2" href="document.html">Documentation<i class="fa fa-book"></i></a>
-                </header>
-            </div>
-            
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <section>
-                    <p><code>Poly Skeleton Mesh</code> is a tool that automatically creates low-poly meshes through node skeletons.</p>
-                    <p><strong>Tag</strong><br/>Unity, Modeling, 3D, Procedural, Generator, Animation, Mesh, Skeleton, Bone, Monster, Tree, Wireframe</p>
-                </section>
-            </div>
-        </div>
+<body class="page-home">
+<a class="skip-link" href="#main">Skip to content</a>
 
-        <div class="clearfix"></div>
-
-        <div class="work-images grid">
-            <ul class="grid-lod effect-2" id="grid">
-
-                <!--                <li>-->
-                <!--                    <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"-->
-                <!--                            allowfullscreen frameborder="0"-->
-                <!--                            referrerpolicy="strict-origin-when-cross-origin"-->
-                <!--                            src="https://www.youtube.com/embed/xSozWsqeBNQ?si=t2KwOWNNM_qdEnaD"-->
-                <!--                            title="YouTube video player" height="564" width="1004"></iframe>-->
-                <!--                </li>-->
-                <!--                <li>-->
-                <!--                    <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"-->
-                <!--                            allowfullscreen frameborder="0"-->
-                <!--                            referrerpolicy="strict-origin-when-cross-origin"-->
-                <!--                            src="https://www.youtube.com/embed/AoYftvtpFuM?si=K8YlVZq_cLj0gfo0"-->
-                <!--                            title="YouTube video player" height="564" width="1004"></iframe>-->
-                <!--                </li>-->
-
-                <li>
-                    <img alt="" class="img-responsive" src="images/document/create%20node.gif"/>
-                </li>
-                
-                <li>
-<!--                    <img alt="" class="img-responsive" src="images/document/monster%20generator.gif"/>-->
-                    <video autoplay loop muted playsinline height="700">
-                        <source src="images/document/monster%20generator.mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </li>
-                
-                <li>
-<!--                    <img alt="" class="img-responsive" src="images/document/monster%20save%20data.gif"/>-->
-                    <video autoplay loop muted playsinline  height="700">
-                        <source src="images/document/monster%20save%20data.mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </li>
-
-                <li>
-                    <img alt="" class="img-responsive" src="images/document/tree%20generator.gif"/>
-                </li>
-
-                <li>
-                    <img alt="" class="img-responsive" src="images/document/wireframe%20mesh%20generator.gif"/>
-                </li>
-            </ul>
-        </div>
+<header class="site-header">
+    <div class="wrap header-inner">
+        <a class="brand" href="index.html">
+            <img src="images/logo.png" width="28" height="28" alt="">
+            <span>Yuan Qu Cool</span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+            <a href="#plugins">Plugins</a>
+            <a href="https://www.youtube.com/@YuanQuCool" target="_blank" rel="noopener">YouTube</a>
+            <a class="nav-cta" href="mailto:yuanqucool@gmail.com">Contact</a>
+        </nav>
     </div>
-    <!-- work details -->
+</header>
+
+<main id="main">
+
+    <section class="hero wrap">
+        <p class="eyebrow">Unity tools by Yuan Qu Cool</p>
+        <h1>Focused tools for<br><span class="grad">procedural 3D</span> in Unity.</h1>
+        <p class="lede">
+            A node-based mesh generator for low-poly creatures, trees and props, and a runtime
+            UV unwrapper that gives any mesh clean, non-overlapping UVs. Every package ships with
+            full documentation, a sample scene and its C# source.
+        </p>
+        <div class="hero-meta">
+            <span data-plugin-count>2 plugins</span>
+            <span>Unity 6+</span>
+            <span>Editor + runtime</span>
+            <span>C# · Burst · Jobs</span>
+        </div>
+    </section>
+
+    <section class="plugins wrap" id="plugins" aria-labelledby="plugins-title">
+        <div class="section-head">
+            <h2 id="plugins-title">Plugins</h2>
+            <p>Model it, unwrap it, ship it.</p>
+        </div>
+
+        <!-- Cards are rendered from js/plugins.js so adding a plugin only means
+             adding an entry there and a folder under plugins/. -->
+        <div class="plugin-grid" id="plugin-grid"></div>
+
+        <noscript>
+            <ul class="chips" style="gap:12px">
+                <li><a href="plugins/poly-skeleton-mesh/">Poly Skeleton Mesh — documentation</a></li>
+                <li><a href="plugins/auto-uv/">Auto UV — documentation</a></li>
+            </ul>
+        </noscript>
+
+        <p class="plugins-note">
+            More tools are on the way — demos and updates land on
+            <a href="https://www.youtube.com/@YuanQuCool" target="_blank" rel="noopener">YouTube</a>.
+        </p>
+    </section>
+
 </main>
-<!-- main -->
 
-<!-- footer -->
-<footer role="footer">
-    <!-- logo -->
-    <nav>
-        <ul>
-            <li>
-                <a href="index.html" title="Yuan Qu Cool"><img alt="Yuan Qu Cool" src="images/logo.png" title="Yuan Qu Cool"/></a>
-            </li>
-        </ul>
-    </nav>
-    <!-- logo -->
-
-    <!-- email -->
-    <p class="copy-right">
-        <a href="mailto:yuanqucool@gmail.com"><i aria-hidden="true" class="fa fa-envelope"></i>yuanqucool@gmail.com</a>
-    </p>
-    <!-- email -->
+<footer class="site-footer">
+    <div class="wrap footer-inner">
+        <a class="footer-brand" href="index.html">
+            <img src="images/logo.png" width="24" height="24" alt="">
+            <span>Yuan Qu Cool</span>
+        </a>
+        <nav class="footer-links" aria-label="Footer">
+            <a href="index.html#plugins">Plugins</a>
+            <a href="https://www.youtube.com/@YuanQuCool" target="_blank" rel="noopener">YouTube</a>
+            <a href="mailto:yuanqucool@gmail.com">yuanqucool@gmail.com</a>
+        </nav>
+        <p class="footer-note">
+            © <span data-year>2026</span> Yuan Qu Cool. Unity is a trademark of Unity Technologies.
+        </p>
+    </div>
 </footer>
-<!-- footer -->
 
-<script src="js/jquery.min.js" type="text/javascript"></script>
-<script src="js/nav.js" type="text/javascript"></script>
-<script src="js/custom.js" type="text/javascript"></script>
-<script src="js/bootstrap.min.js" type="text/javascript"></script>
-<script src="js/effects/masonry.pkgd.min.js" type="text/javascript"></script>
-<script src="js/effects/imagesloaded.js" type="text/javascript"></script>
-<script src="js/effects/classie.js" type="text/javascript"></script>
-<script src="js/effects/AnimOnScroll.js" type="text/javascript"></script>
-<script src="js/effects/modernizr.custom.js"></script>
-<script src="js/html5shiv.js" type="text/javascript"></script>
+<script src="js/plugins.js"></script>
+<script src="js/site.js"></script>
 </body>
 </html>
