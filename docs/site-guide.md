@@ -51,6 +51,12 @@ scripts. What is in the repository is what ships.
 }
 ```
 
+Paths in the registry (`docs`, `cover`) are written **relative to the site root**. Pages live one
+or two directories deep, so any link rendered by `js/site.js` must go through its
+`fromSiteRoot()` helper — it resolves against `js/site.js` itself and stays correct on a
+sub-path. A bare `plugin.docs` in an `href` would 404 from inside `plugins/<slug>/`; that is
+the one bug class to watch for when adding generated links.
+
 That is all. The landing page cards, the plugin count and the "next plugin" pager on every
 documentation page are derived from this list. Also update the `<noscript>` fallback list in
 `index.html`, add a `<url>` entry to `sitemap.xml`, and — if the plugin deserves it — a section
@@ -62,11 +68,17 @@ in the marketing `README.md`.
 public yet, so:
 
 - the card renders `Asset Store · soon` (a plain label with a tooltip) instead of a link,
-- the documentation hero keeps its `<span class="pill" data-store-pill>Asset Store · soon</span>`
-  as a label.
+- the documentation hero button is swapped for a muted `Asset Store · soon` placeholder.
 
-Flipping `storeLive` to `true` (or deleting the flag) upgrades both to real links on the next
-load; nothing else has to be edited when Unity approves the package.
+The hero is authored as a normal link so the site keeps working without JavaScript:
+
+```html
+<a class="btn btn--primary" data-store-button
+   href="https://assetstore.unity.com/packages/slug/000000" target="_blank" rel="noopener">Asset Store ↗</a>
+```
+
+`js/site.js` then syncs its `href` from the registry (and downgrades it when `storeLive` is
+false), so the URL only lives in one place and the two pages stay consistent.
 
 New palettes go into `css/site.css` next to `.accent--coral` / `.accent--blue`:
 
@@ -103,8 +115,9 @@ New palettes go into `css/site.css` next to `.accent--coral` / `.accent--blue`:
   `data-autoplay` videos only play while they are on screen, and `js/site.js` pins their aspect
   ratio from `width`/`height` so the page does not jump while they load. Always keep the poster
   and the explicit dimensions. Two figures side by side go in `<div class="media-grid">`.
-- The documentation hero may carry a `data-store-pill` pill; the store state is filled in from
-  the registry at runtime.
+- The documentation hero carries the Asset Store call to action: a `data-store-button` link
+  next to "Start reading". Its `href` is synced from the registry, and `storeLive: false`
+  downgrades it to the muted `btn--soon` placeholder at runtime.
 
 ## Media pipeline
 

@@ -23,6 +23,29 @@
         });
     var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // Registry paths such as "plugins/auto-uv/" are written relative to the site
+    // root, while pages live one or two directories deep. site.js always sits at
+    // <root>/js/site.js, so its own URL gives us a reliable base — even when the
+    // site is served from a sub-path.
+    var siteBase = (function () {
+        var script = document.currentScript;
+        if (script && script.src) {
+            return new URL("../", script.src);
+        }
+        return new URL("/", window.location.href);
+    })();
+
+    function fromSiteRoot(path) {
+        if (!path) {
+            return path;
+        }
+        try {
+            return new URL(path, siteBase).href;
+        } catch (error) {
+            return path;
+        }
+    }
+
     document.documentElement.classList.remove("no-js");
     document.documentElement.classList.add("js");
 
@@ -73,7 +96,7 @@
     function buildCard(plugin) {
         var media = node("figure", { className: "card-media" }, [
             node("img", {
-                src: plugin.cover,
+                src: fromSiteRoot(plugin.cover),
                 alt: plugin.coverAlt || plugin.name,
                 width: "960",
                 height: "600",
@@ -90,7 +113,7 @@
         ]);
 
         var title = node("h3", { className: "card-title" }, [
-            node("a", { href: plugin.docs, text: plugin.name }),
+            node("a", { href: fromSiteRoot(plugin.docs), text: plugin.name }),
             node("span", { className: "arrow", "aria-hidden": "true", text: "→" })
         ]);
 
@@ -472,7 +495,7 @@
                     "a",
                     {
                         className: "pager-link" + (i % 2 === 1 ? " pager-link--next" : ""),
-                        href: plugin.docs
+                        href: fromSiteRoot(plugin.docs)
                     },
                     [
                         node("span", {
@@ -494,26 +517,25 @@
        6. Store state — the docs hero mirrors the registry
        ------------------------------------------------------------------ */
 
-    function stampStorePill() {
-        var pill = document.querySelector("[data-store-pill]");
+    function stampStoreButton() {
+        var link = document.querySelector("[data-store-button]");
         var plugin = getPlugin(currentSlug());
-        if (!pill || !plugin) {
+        if (!link || !plugin || !plugin.store) {
             return;
         }
-        if (plugin.store && plugin.storeLive !== false) {
-            pill.replaceWith(
-                node("a", {
-                    className: "pill pill--accent",
-                    href: plugin.store,
-                    target: "_blank",
-                    rel: "noopener",
-                    text: "Asset Store ↗"
+        if (plugin.storeLive === false) {
+            link.replaceWith(
+                node("span", {
+                    className: "btn btn--soon",
+                    "aria-disabled": "true",
+                    title: "The Asset Store listing is in review; it goes live once Unity approves it.",
+                    text: "Asset Store · soon"
                 })
             );
-        } else if (plugin.store) {
-            pill.title =
-                "The Asset Store listing is in review; it goes live once Unity approves it.";
+            return;
         }
+        // Keep the static href honest with the registry (no-JS visitors use it).
+        link.href = plugin.store;
     }
 
     /* ------------------------------------------------------------------
@@ -624,7 +646,7 @@
         headerState();
         prefetchLinks();
         stampCounts();
-        stampStorePill();
+        stampStoreButton();
         stampYear();
     }
 

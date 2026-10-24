@@ -61,9 +61,8 @@ window.YQC = {
                 "Three procedural meshes unwrapped by Auto UV with colour-block UV islands and their layout panels behind them.",
             flag: "New",
             docs: "plugins/auto-uv/",
-            // Canonical Asset Store URL. The listing is still in Unity review, so
-            // the card shows a quiet "soon" label instead of a link; set
-            // `storeLive: true` (or delete the flag) once the page is public.
+            // Add `storeLive: false` while the store page is not public yet: the
+            // card and the documentation hero then show "Asset Store · soon".
             store: "https://assetstore.unity.com/packages/slug/421610",
             order: 2
         }
